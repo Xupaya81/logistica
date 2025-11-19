@@ -1,43 +1,4 @@
-{% extends "base.html" %}
 
-{% block content %}
-<div class="card shadow-sm">
-  <div class="card-body">
-    <h5 class="card-title mb-4">Editar Carga</h5>
-    <form method="post">
-      {% csrf_token %}
-      <div class="mb-3">
-        <label class="form-label">Descripción</label>
-        <input name="descripcion" type="text" class="form-control">
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Peso (kg)</label>
-        <input name="peso_kg" type="number" class="form-control" min="0">
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Tipo</label>
-        <input name="tipo" type="text" class="form-control">
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Valor</label>
-        <input name="valor" type="number" class="form-control" min="0">
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Cliente</label>
-        <select name="cliente" class="form-select">
-          <option value="">-- Selecciona cliente --</option>
-        </select>
-      </div>
-
-      <div class="card-footer bg-transparent p-0 mt-3 text-end">
-        <button class="btn btn-primary" type="submit">Guardar cambios</button>
-        <a class="btn btn-secondary ms-2" href="/site/">Cancelar</a>
-      </div>
-    </form>
-  </div>
-</div>
-
-{% endblock %}
 {% extends "base.html" %}
 
 {% block content %}

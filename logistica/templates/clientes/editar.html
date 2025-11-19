@@ -1,40 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="card shadow-sm">
-  <div class="card-body">
-    <h5 class="card-title mb-4">Editar Cliente</h5>
-    <form method="post">
-      {% csrf_token %}
-      <div class="mb-3">
-        <label class="form-label">Nombre</label>
-        <input name="nombre" type="text" class="form-control">
-      </div>
-      <div class="mb-3">
-        <label class="form-label">RUT</label>
-        <input name="rut" type="text" class="form-control">
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Correo</label>
-        <input name="correo" type="email" class="form-control">
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Teléfono</label>
-        <input name="telefono" type="text" class="form-control">
-      </div>
-
-      <div class="card-footer bg-transparent p-0 mt-3 text-end">
-        <button class="btn btn-primary" type="submit">Guardar cambios</button>
-        <a class="btn btn-secondary ms-2" href="/site/">Cancelar</a>
-      </div>
-    </form>
-  </div>
-</div>
-
-{% endblock %}
-{% extends "base.html" %}
-
-{% block content %}
 
 <h2 class="mb-4"> Editar Cliente</h2>
 

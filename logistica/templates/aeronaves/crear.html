@@ -1,36 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="card shadow-sm">
-  <div class="card-body">
-    <h5 class="card-title mb-4">Crear Aeronave</h5>
-    <form method="post">
-      {% csrf_token %}
-      <div class="mb-3">
-        <label class="form-label">Código</label>
-        <input name="codigo" type="text" class="form-control" placeholder="Ej: AC-123">
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Modelo</label>
-        <input name="modelo" type="text" class="form-control">
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Capacidad (kg)</label>
-        <input name="capacidad_kg" type="number" class="form-control" min="0">
-      </div>
-
-      <div class="card-footer bg-transparent p-0 mt-3 text-end">
-        <button class="btn btn-primary" type="submit">Guardar</button>
-        <a class="btn btn-secondary ms-2" href="/site/">Cancelar</a>
-      </div>
-    </form>
-  </div>
-</div>
-
-{% endblock %}
-{% extends "base.html" %}
-
-{% block content %}
 
 <h2 class="mb-4">➕ Nueva Aeronave</h2>
 

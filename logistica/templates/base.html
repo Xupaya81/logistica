@@ -59,23 +59,66 @@
 <body>
 
     <!-- NAVBAR RESPONSIVE -->
-    <nav class="navbar navbar-expand-lg px-4">
-        <a class="navbar-brand d-flex align-items-center" href="/site/">
-            <i class="bi bi-box-seam me-2"></i> Logística Global
-        </a>
+<nav class="navbar navbar-expand-lg px-4">
+    <a class="navbar-brand d-flex align-items-center" href="/site/">
+        <i class="bi bi-box-seam me-2"></i>
+        Logística Global
+    </a>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuNav">
+        <span class="navbar-toggler-icon"></span>
+    </button>
 
-        <div class="collapse navbar-collapse" id="menuNav">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a href="/site/despachos" class="nav-link"><i class="bi bi-truck me-1"></i>Despachos</a></li>
-                <li class="nav-item"><a href="/site/rutas" class="nav-link"><i class="bi bi-signpost-split me-1"></i>Rutas</a></li>
-                <li class="nav-item"><a href="/site/clientes" class="nav-link"><i class="bi bi-people me-1"></i>Clientes</a></li>
-            </ul>
-        </div>
-    </nav>
+    <div class="collapse navbar-collapse" id="menuNav">
+
+        <!-- Menú alineado a la derecha -->
+        <ul class="navbar-nav ms-auto">
+
+            <!-- Inicio -->
+            <li class="nav-item">
+                <a href="/site/" class="nav-link">
+                    <i class="bi bi-house-door me-1"></i>Inicio
+                </a>
+            </li>
+
+            <!-- Dropdown Gestión (mega menú compacto) -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                    <i class="bi bi-grid me-1"></i>Gestión
+                </a>
+
+                <ul class="dropdown-menu dropdown-menu-end">
+
+                    <li class="dropdown-header fw-bold text-secondary">Principal</li>
+                    <li><a class="dropdown-item" href="/site/despachos/"><i class="bi bi-truck me-2"></i>Despachos</a></li>
+                    <li><a class="dropdown-item" href="/site/rutas/"><i class="bi bi-signpost-split me-2"></i>Rutas</a></li>
+                    <li><a class="dropdown-item" href="/site/clientes/"><i class="bi bi-people me-2"></i>Clientes</a></li>
+
+                    <li><hr class="dropdown-divider"></li>
+
+                    <li class="dropdown-header fw-bold text-secondary">Transporte</li>
+                    <li><a class="dropdown-item" href="/site/vehiculos/"><i class="bi bi-truck-front me-2"></i>Vehículos</a></li>
+                    <li><a class="dropdown-item" href="/site/aeronaves/"><i class="bi bi-airplane me-2"></i>Aeronaves</a></li>
+                    <li><a class="dropdown-item" href="/site/cargas/"><i class="bi bi-box me-2"></i>Cargas</a></li>
+
+                    <li><hr class="dropdown-divider"></li>
+
+                    <li class="dropdown-header fw-bold text-secondary">Personal</li>
+                    <li><a class="dropdown-item" href="/site/conductores/"><i class="bi bi-person-badge me-2"></i>Conductores</a></li>
+                    <li><a class="dropdown-item" href="/site/pilotos/"><i class="bi bi-person-gear me-2"></i>Pilotos</a></li>
+                </ul>
+            </li>
+
+            <!-- Swagger -->
+            <li class="nav-item">
+                <a class="nav-link" href="/swagger/">
+                    <i class="bi bi-code-slash me-1"></i>API Docs
+                </a>
+            </li>
+        </ul>
+
+    </div>
+</nav>
 
     <!-- CONTENIDO PRINCIPAL -->
     <div class="container mt-4">

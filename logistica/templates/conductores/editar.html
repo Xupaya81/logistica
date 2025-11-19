@@ -1,40 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="card shadow-sm">
-  <div class="card-body">
-    <h5 class="card-title mb-4">Editar Conductor</h5>
-    <form method="post">
-      {% csrf_token %}
-      <div class="mb-3">
-        <label class="form-label">Nombre</label>
-        <input name="nombre" type="text" class="form-control">
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Apellido</label>
-        <input name="apellido" type="text" class="form-control">
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Licencia</label>
-        <input name="licencia" type="text" class="form-control">
-      </div>
-      <div class="form-check mb-3">
-        <input name="vigente" class="form-check-input" type="checkbox" id="vigente">
-        <label class="form-check-label" for="vigente">Vigente</label>
-      </div>
-
-      <div class="card-footer bg-transparent p-0 mt-3 text-end">
-        <button class="btn btn-primary" type="submit">Guardar cambios</button>
-        <a class="btn btn-secondary ms-2" href="/site/">Cancelar</a>
-      </div>
-    </form>
-  </div>
-</div>
-
-{% endblock %}
-{% extends "base.html" %}
-
-{% block content %}
 
 <h2 class="mb-4">✏️ Editar Conductor</h2>
 

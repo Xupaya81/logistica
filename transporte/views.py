@@ -217,3 +217,18 @@ def despachos_editar(request, pk):
 
 def despachos_eliminar(request, pk):
     return render(request, "despachos/eliminar.html")
+
+def vehiculos_list(request):
+    return render(request, "vehiculos/list.html")
+
+def aeronaves_list(request):
+    return render(request, "aeronaves/list.html")
+
+def cargas_list(request):
+    return render(request, "cargas/list.html")
+
+def conductores_list(request):
+    return render(request, "conductores/list.html")
+
+def pilotos_list(request):
+    return render(request, "pilotos/list.html")

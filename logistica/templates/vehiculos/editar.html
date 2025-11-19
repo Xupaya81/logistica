@@ -1,48 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="card shadow-sm">
-  <div class="card-body">
-    <h5 class="card-title mb-4">Editar Vehículo</h5>
-    <form method="post">
-      {% csrf_token %}
-      <div class="mb-3">
-        <label class="form-label">Patente</label>
-        <input name="patente" type="text" class="form-control">
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Marca</label>
-        <input name="marca" type="text" class="form-control">
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Modelo</label>
-        <input name="modelo" type="text" class="form-control">
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Capacidad (kg)</label>
-        <input name="capacidad_kg" type="number" class="form-control" min="0">
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Tipo de transporte</label>
-        <select name="tipo_transporte" class="form-select">
-          <option value="">-- Selecciona --</option>
-          <option value="TERRESTRE">Transporte Terrestre</option>
-          <option value="AEREO">Transporte Aéreo</option>
-        </select>
-      </div>
-
-      <div class="card-footer bg-transparent p-0 mt-3 text-end">
-        <button type="submit" class="btn btn-primary">Guardar cambios</button>
-        <a href="/site/" class="btn btn-secondary ms-2">Cancelar</a>
-      </div>
-    </form>
-  </div>
-</div>
-
-{% endblock %}
-{% extends "base.html" %}
-
-{% block content %}
 
 <h2 class="mb-4">✏️ Editar Vehículo</h2>
 

@@ -1,37 +1,48 @@
+{% extends "base.html" %}
+
 {% block content %}
 
-<h2 class="mb-4">➕ Nuevo Cliente</h2>
+<h2 class="mb-4">➕ Registrar Nuevo Cliente</h2>
 
 <div class="card shadow-sm">
     <div class="card-body">
 
-        <form>
+        <form method="post">
+            {% csrf_token %}
 
+            <!-- Nombre o Razón Social -->
             <div class="mb-3">
                 <label class="form-label fw-bold">Nombre o Razón Social</label>
-                <input type="text" class="form-control" placeholder="Ej: Transportes Ruiz Ltda">
+                <input name="nombre" type="text" class="form-control"
+                       placeholder="Ej: Transportes Ruiz Ltda">
             </div>
 
+            <!-- RUT -->
             <div class="mb-3">
                 <label class="form-label fw-bold">RUT</label>
-                <input type="text" class="form-control" placeholder="12.345.678-9">
+                <input name="rut" type="text" class="form-control"
+                       placeholder="12.345.678-9">
             </div>
 
+            <!-- Correo -->
             <div class="mb-3">
                 <label class="form-label fw-bold">Correo electrónico</label>
-                <input type="email" class="form-control" placeholder="cliente@correo.com">
+                <input name="correo" type="email" class="form-control"
+                       placeholder="cliente@correo.com">
             </div>
 
+            <!-- Estado -->
             <div class="mb-3">
                 <label class="form-label fw-bold">Estado</label>
-                <select class="form-select">
+                <select name="estado" class="form-select">
+                    <option value="">Seleccione...</option>
                     <option value="1">Activo</option>
                     <option value="0">Inactivo</option>
                 </select>
             </div>
 
             <div class="d-flex justify-content-between mt-4">
-                <a href="/site/clientes" class="btn btn-secondary">← Volver</a>
+                <a href="{% url 'clientes_list' %}" class="btn btn-secondary">← Volver</a>
                 <button class="btn btn-dark">Guardar Cliente</button>
             </div>
 
