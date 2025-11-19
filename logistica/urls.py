@@ -40,17 +40,18 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
-    # Páginas HTML (interfaz Bootstrap)
-    path('', home),
-    path('despachos', despachos_html),
-    path('rutas', rutas_html),
-    path('clientes', clientes_html),
+
+    # API (montada en root) y vistas HTML bajo 'site/' para evitar colisiones
+    path('', include('transporte.urls')),
+
+    # Páginas HTML (interfaz Bootstrap) - accesibles bajo /site/
+    path('site/', home),
+    path('site/despachos', despachos_html),
+    path('site/rutas', rutas_html),
+    path('site/clientes', clientes_html),
 
     # Admin
     path('admin/', admin.site.urls),
-
-    # API
-    path('', include('transporte.urls')),
 
     # JWT
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),

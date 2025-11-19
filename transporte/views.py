@@ -1,20 +1,26 @@
+"""Vistas y viewsets para la app `transporte`.
+
+Contiene ViewSets para la API REST y vistas que renderizan
+plantillas HTML para el frontend Bootstrap.
+"""
+
 from django.shortcuts import render
+
 from rest_framework import viewsets
+from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.permissions import IsAuthenticated
+
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.filters import SearchFilter, OrderingFilter
-from django.shortcuts import render
-from .models import Despacho, Ruta, Cliente
 
 from .models import (
-    Vehiculo, Aeronave, Conductor, Piloto,
-    Cliente, Carga, Ruta, Despacho
+    Aeronave, Carga, Cliente, Conductor, Despacho,
+    Piloto, Ruta, Vehiculo,
 )
 
 from .serializers import (
-    VehiculoSerializer, AeronaveSerializer, ConductorSerializer,
-    PilotoSerializer, ClienteSerializer, CargaSerializer,
-    RutaSerializer, DespachoSerializer
+    AeronaveSerializer, CargaSerializer, ClienteSerializer,
+    ConductorSerializer, DespachoSerializer, PilotoSerializer,
+    RutaSerializer, VehiculoSerializer,
 )
 
 
@@ -90,16 +96,24 @@ class DespachoViewSet(viewsets.ModelViewSet):
 
 
 # ============================================================
-# VISTAS ADICIONALES
+# VISTAS ADICIONALES (HTML)
+
 def home(request):
+    """Renderiza el panel principal del frontend (Bootstrap)."""
     return render(request, "home.html")
 
+
 def despachos_html(request):
+    """Renderiza la lista de despachos usando `despachos.html`."""
     contexto = {"despachos": Despacho.objects.all()}
     return render(request, "despachos.html", contexto)
 
+
 def rutas_html(request):
+    """Renderiza la vista de rutas."""
     return render(request, "rutas.html", {"rutas": Ruta.objects.all()})
 
+
 def clientes_html(request):
+    """Renderiza la vista de clientes."""
     return render(request, "clientes.html", {"clientes": Cliente.objects.all()})

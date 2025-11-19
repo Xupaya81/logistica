@@ -1,9 +1,14 @@
-from django.urls import path, include
+"""Ruteo de la API REST para la app `transporte`.
+
+Expone los ViewSets a través de un `DefaultRouter`.
+"""
+
+from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
 from .views import (
-    VehiculoViewSet, AeronaveViewSet, ConductorViewSet, PilotoViewSet,
-    ClienteViewSet, CargaViewSet, RutaViewSet, DespachoViewSet
+    AeronaveViewSet, CargaViewSet, ClienteViewSet, ConductorViewSet,
+    DespachoViewSet, PilotoViewSet, RutaViewSet, VehiculoViewSet,
 )
 
 router = DefaultRouter()

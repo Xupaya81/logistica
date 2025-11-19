@@ -61,7 +61,7 @@ ROOT_URLCONF = 'logistica.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / "templates"],  # Para tus vistas con Bootstrap
+        'DIRS': [ BASE_DIR / "logistica" / "templates" ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
