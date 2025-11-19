@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card shadow-sm">
+  <div class="card-body">
+    <h5 class="card-title mb-4">Eliminar Ruta</h5>
+    <p>¿Seguro que quieres eliminar esta ruta?</p>
+    <form method="post">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label class="form-label">Origen</label>
+        <input name="origen" type="text" class="form-control" disabled>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Destino</label>
+        <input name="destino" type="text" class="form-control" disabled>
+      </div>
+
+      <div class="card-footer bg-transparent p-0 mt-3 text-end">
+        <button class="btn btn-danger" type="submit">Eliminar</button>
+        <a class="btn btn-secondary ms-2" href="/site/">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="mb-4 text-danger fw-bold">⚠️ Eliminar Ruta</h2>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+
+        <p class="fs-5">
+            ¿Estás seguro que deseas eliminar la ruta:
+            <br>
+            <strong>Santiago → Iquique</strong>?
+        </p>
+
+        <p class="text-muted">
+            Esta acción no se puede deshacer.
+        </p>
+
+        <div class="d-flex justify-content-between mt-4">
+            <a href="/site/rutas" class="btn btn-secondary">Cancelar</a>
+            <button class="btn btn-danger">Eliminar definitivamente</button>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

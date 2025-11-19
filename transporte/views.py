@@ -117,3 +117,103 @@ def rutas_html(request):
 def clientes_html(request):
     """Renderiza la vista de clientes."""
     return render(request, "clientes.html", {"clientes": Cliente.objects.all()})
+
+
+# ============================================================
+# VISTAS CRUD (formularios estáticos)
+
+
+def vehiculos_crear(request):
+    return render(request, "vehiculos/crear.html")
+
+
+def vehiculos_editar(request, pk):
+    return render(request, "vehiculos/editar.html")
+
+
+def vehiculos_eliminar(request, pk):
+    return render(request, "vehiculos/eliminar.html")
+
+
+def aeronaves_crear(request):
+    return render(request, "aeronaves/crear.html")
+
+
+def aeronaves_editar(request, pk):
+    return render(request, "aeronaves/editar.html")
+
+
+def aeronaves_eliminar(request, pk):
+    return render(request, "aeronaves/eliminar.html")
+
+
+def conductores_crear(request):
+    return render(request, "conductores/crear.html")
+
+
+def conductores_editar(request, pk):
+    return render(request, "conductores/editar.html")
+
+
+def conductores_eliminar(request, pk):
+    return render(request, "conductores/eliminar.html")
+
+
+def pilotos_crear(request):
+    return render(request, "pilotos/crear.html")
+
+
+def pilotos_editar(request, pk):
+    return render(request, "pilotos/editar.html")
+
+
+def pilotos_eliminar(request, pk):
+    return render(request, "pilotos/eliminar.html")
+
+
+def clientes_crear(request):
+    return render(request, "clientes/crear.html")
+
+
+def clientes_editar(request, pk):
+    return render(request, "clientes/editar.html")
+
+
+def clientes_eliminar(request, pk):
+    return render(request, "clientes/eliminar.html")
+
+
+def cargas_crear(request):
+    return render(request, "cargas/crear.html")
+
+
+def cargas_editar(request, pk):
+    return render(request, "cargas/editar.html")
+
+
+def cargas_eliminar(request, pk):
+    return render(request, "cargas/eliminar.html")
+
+
+def rutas_crear(request):
+    return render(request, "rutas/crear.html")
+
+
+def rutas_editar(request, pk):
+    return render(request, "rutas/editar.html")
+
+
+def rutas_eliminar(request, pk):
+    return render(request, "rutas/eliminar.html")
+
+
+def despachos_crear(request):
+    return render(request, "despachos/crear.html")
+
+
+def despachos_editar(request, pk):
+    return render(request, "despachos/editar.html")
+
+
+def despachos_eliminar(request, pk):
+    return render(request, "despachos/eliminar.html")

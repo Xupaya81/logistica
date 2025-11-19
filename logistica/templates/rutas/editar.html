@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card shadow-sm">
+  <div class="card-body">
+    <h5 class="card-title mb-4">Editar Ruta</h5>
+    <form method="post">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label class="form-label">Origen</label>
+        <input name="origen" type="text" class="form-control">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Destino</label>
+        <input name="destino" type="text" class="form-control">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Tipo de transporte</label>
+        <select name="tipo_transporte" class="form-select">
+          <option value="">-- Selecciona --</option>
+          <option value="TERRESTRE">Transporte Terrestre</option>
+          <option value="AEREO">Transporte Aéreo</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Distancia (km)</label>
+        <input name="distancia_km" type="number" class="form-control" min="0">
+      </div>
+
+      <div class="card-footer bg-transparent p-0 mt-3 text-end">
+        <button class="btn btn-primary" type="submit">Guardar cambios</button>
+        <a class="btn btn-secondary ms-2" href="/site/">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="mb-4">✏️ Editar Ruta</h2>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+
+        <form>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Origen</label>
+                <input type="text" class="form-control" value="Santiago">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Destino</label>
+                <input type="text" class="form-control" value="Iquique">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Tipo de Transporte</label>
+                <select class="form-select">
+                    <option selected>Terrestre</option>
+                    <option>Aéreo</option>
+                    <option>Marítimo</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Cliente</label>
+                <select class="form-select">
+                    <option selected>Cliente A</option>
+                    <option>Cliente B</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Estado</label>
+                <select class="form-select">
+                    <option value="1" selected>Activa</option>
+                    <option value="0">Suspendida</option>
+                </select>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <a href="/site/rutas" class="btn btn-secondary">← Volver</a>
+                <button class="btn btn-dark">Guardar Cambios</button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

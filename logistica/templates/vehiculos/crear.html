@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card shadow-sm">
+  <div class="card-body">
+    <h5 class="card-title mb-4">Crear Vehículo</h5>
+    <form method="post">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label class="form-label">Patente</label>
+        <input name="patente" type="text" class="form-control" placeholder="Ej: ABCD12">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Marca</label>
+        <input name="marca" type="text" class="form-control" placeholder="Ej: Toyota">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Modelo</label>
+        <input name="modelo" type="text" class="form-control" placeholder="Ej: Hilux">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Capacidad (kg)</label>
+        <input name="capacidad_kg" type="number" class="form-control" min="0">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Tipo de transporte</label>
+        <select name="tipo_transporte" class="form-select">
+          <option value="">-- Selecciona --</option>
+          <option value="TERRESTRE">Transporte Terrestre</option>
+          <option value="AEREO">Transporte Aéreo</option>
+        </select>
+      </div>
+
+      <div class="card-footer bg-transparent p-0 mt-3 text-end">
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <a href="/site/" class="btn btn-secondary ms-2">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="mb-4">➕ Nuevo Vehículo</h2>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+
+        <form>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Patente</label>
+                <input type="text" class="form-control" placeholder="Ej: ABCD-12">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Marca</label>
+                <input type="text" class="form-control" placeholder="Ej: Mercedes-Benz">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Modelo</label>
+                <input type="text" class="form-control" placeholder="Ej: Actros 2645">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Tipo de Transporte</label>
+                <select class="form-select">
+                    <option>Camión</option>
+                    <option>Furgón</option>
+                    <option>Pickup</option>
+                    <option>Remolque</option>
+                </select>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <a href="/site/vehiculos" class="btn btn-secondary">← Volver</a>
+                <button class="btn btn-dark">Registrar Vehículo</button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

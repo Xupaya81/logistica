@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="mb-4">Pilotos</h2>
+
+<a href="/site/pilotos/crear/" class="btn btn-dark mb-3">🛩️ Agregar Piloto</a>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Certificación</th>
+                    <th>Experiencia</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in pilotos %}
+                <tr>
+                    <td><strong>{{ p.nombre }} {{ p.apellido }}</strong></td>
+                    <td>{{ p.certificacion }}</td>
+                    <td>{{ p.anios_experiencia }} años</td>
+                    <td class="text-end">
+                        <a href="/site/pilotos/editar/{{ p.id }}/" class="btn btn-outline-secondary btn-sm">Editar</a>
+                        <a href="/site/pilotos/eliminar/{{ p.id }}/" class="btn btn-outline-danger btn-sm">Eliminar</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center text-muted py-3">No hay pilotos registrados.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

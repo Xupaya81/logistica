@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="mb-4 text-danger fw-bold">⚠️ Eliminar Despacho</h2>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+
+        <p class="fs-5">
+            ¿Estás seguro que deseas eliminar este despacho?
+        </p>
+
+        <p class="text-muted">
+            Esta acción no se puede deshacer.
+        </p>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="d-flex justify-content-between mt-4">
+                <a href="/site/despachos" class="btn btn-secondary">Cancelar</a>
+                <button class="btn btn-danger" type="submit">Eliminar definitivamente</button>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

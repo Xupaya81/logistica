@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card shadow-sm">
+  <div class="card-body">
+    <h5 class="card-title mb-4">Editar Aeronave</h5>
+    <form method="post">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label class="form-label">Código</label>
+        <input name="codigo" type="text" class="form-control">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Modelo</label>
+        <input name="modelo" type="text" class="form-control">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Capacidad (kg)</label>
+        <input name="capacidad_kg" type="number" class="form-control" min="0">
+      </div>
+
+      <div class="card-footer bg-transparent p-0 mt-3 text-end">
+        <button class="btn btn-primary" type="submit">Guardar cambios</button>
+        <a class="btn btn-secondary ms-2" href="/site/">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="mb-4">✏️ Editar Aeronave</h2>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+
+        <form>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Código aeronave</label>
+                <input type="text" class="form-control" value="AER-320">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Modelo</label>
+                <input type="text" class="form-control" value="Airbus A320">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Capacidad (kg)</label>
+                <input type="number" class="form-control" value="7000">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Estado</label>
+                <select class="form-select">
+                    <option selected>Operativa</option>
+                    <option>Fuera de servicio</option>
+                </select>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <a href="/site/aeronaves" class="btn btn-secondary">← Volver</a>
+                <button class="btn btn-dark">Guardar Cambios</button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}
