@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="mb-4">Panel Principal</h2>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5>Despachos</h5>
+                <p>Ver todos los despachos registrados.</p>
+                <a href="/despachos" class="btn btn-dark w-100">Ir</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5>Rutas</h5>
+                <p>Listado de rutas nacionales e internacionales.</p>
+                <a href="/rutas" class="btn btn-dark w-100">Ver rutas</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5>Clientes</h5>
+                <p>Central de información de clientes.</p>
+                <a href="/clientes" class="btn btn-dark w-100">Clientes</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
