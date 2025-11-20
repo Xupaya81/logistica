@@ -1,5 +1,13 @@
 {% extends "base.html" %}
 
+<!-- 
+    VISTA PRINCIPAL (Dashboard)
+    Muestra un resumen general del sistema con:
+    - Tarjetas de métricas clave (KPIs).
+    - Gráficos interactivos (Chart.js).
+    - Accesos directos a los módulos principales.
+-->
+
 {% block content %}
 
 <!-- Barra superior del panel -->
@@ -8,7 +16,7 @@
     <span class="text-muted">Sistema de Gestión de Transporte</span>
 </div>
 
-<!-- Métricas rápidas -->
+<!-- SECCIÓN DE MÉTRICAS (KPIs): Tarjetas con contadores rápidos -->
 <div class="row mb-4">
     <div class="col-md-4 mb-3">
         <div class="card shadow-sm border-0">
@@ -47,7 +55,7 @@
     </div>
 </div>
 
-<!-- Gráficos -->
+<!-- SECCIÓN DE GRÁFICOS: Visualización de datos con Chart.js -->
 <div class="row mb-4">
     <div class="col-md-6 mb-3">
         <div class="card shadow-sm border-0 h-100">
@@ -67,7 +75,7 @@
     </div>
 </div>
 
-<!-- Menú principal -->
+<!-- SECCIÓN DE ACCESOS DIRECTOS: Links a los módulos principales -->
 <div class="row">
     <div class="col-md-4">
         <div class="card shadow-sm border-0 h-100">
@@ -100,10 +108,10 @@
     </div>
 </div>
 
-<!-- Chart.js -->
+<!-- Chart.js: Librería para gráficos -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<!-- Datos para gráficos (JSON Script) -->
+<!-- Datos para gráficos (JSON Script): Transferencia segura de datos desde Django a JS -->
 {{ despachos_labels|json_script:"despachos-labels-data" }}
 {{ despachos_data|json_script:"despachos-data-data" }}
 {{ transport_types|json_script:"transport-types-data" }}
@@ -115,7 +123,7 @@
         const despachosData = JSON.parse(document.getElementById('despachos-data-data').textContent);
         const transportTypes = JSON.parse(document.getElementById('transport-types-data').textContent);
 
-        // Gráfico de Despachos
+        // Gráfico de Despachos (Doughnut)
         const ctxDespachos = document.getElementById('despachosChart').getContext('2d');
         new Chart(ctxDespachos, {
             type: 'doughnut',
@@ -138,7 +146,7 @@
             }
         });
 
-        // Gráfico de Transporte
+        // Gráfico de Transporte (Bar)
         const ctxTransporte = document.getElementById('transporteChart').getContext('2d');
         new Chart(ctxTransporte, {
             type: 'bar',

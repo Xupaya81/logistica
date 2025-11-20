@@ -1,5 +1,14 @@
 {% extends "base.html" %}
 
+<!-- 
+    VISTA DE LISTADO DE CONDUCTORES
+    Permite:
+    - Visualizar la lista de conductores registrados.
+    - Filtrar por nombre y número de licencia.
+    - Acceder a la creación y edición de conductores.
+    - Carga asíncrona de datos.
+-->
+
 {% block content %}
 
 <h2 class="mb-4 d-flex justify-content-between align-items-center">
@@ -7,7 +16,7 @@
     <a href="{% url 'conductores_crear' %}" class="btn btn-dark">➕ Nuevo Conductor</a>
 </h2>
 
-<!-- Filtros -->
+<!-- SECCIÓN DE FILTROS: Búsqueda por nombre y licencia -->
 <div class="card shadow-sm mb-4">
     <div class="card-body">
         <form id="filtroForm" class="row g-3">
@@ -30,7 +39,7 @@
     </div>
 </div>
 
-<!-- Tabla -->
+<!-- TABLA DE RESULTADOS: Listado de conductores -->
 <div class="card shadow-sm">
     <div class="card-body">
 
@@ -58,11 +67,17 @@
 </div>
 
 <script>
+// ===============================
+// LÓGICA DE CONDUCTORES (Frontend)
+// ===============================
+
+// Función para cargar la tabla de conductores desde la API
 async function cargarConductores() {
     const tbody = document.getElementById("tablaConductores");
     tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-4">Cargando...</td></tr>`;
 
     try {
+        // Petición GET a la API
         const res = await fetch("/conductores/");
         const data = await res.json();
 
@@ -75,6 +90,7 @@ async function cargarConductores() {
             return;
         }
 
+        // Renderizado de filas
         tbody.innerHTML = "";
         data.forEach(c => {
             tbody.innerHTML += `
@@ -102,11 +118,13 @@ async function cargarConductores() {
     }
 }
 
+// Evento para el formulario de filtros
 document.getElementById("filtroForm").addEventListener("submit", e => {
     e.preventDefault();
     aplicarFiltros();
 });
 
+// Función para aplicar los filtros en la tabla de conductores
 async function aplicarFiltros() {
     const nombre = document.getElementById("filtroNombre").value.toLowerCase();
     const licencia = document.getElementById("filtroLicencia").value.toLowerCase();
@@ -127,6 +145,7 @@ async function aplicarFiltros() {
         return;
     }
 
+    // Renderizado de filas filtradas
     filtrados.forEach(c => {
         tbody.innerHTML += `
             <tr>
@@ -146,6 +165,7 @@ async function aplicarFiltros() {
     });
 }
 
+// Carga inicial de conductores
 cargarConductores();
 </script>
 

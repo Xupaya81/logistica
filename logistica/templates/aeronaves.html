@@ -1,5 +1,14 @@
 {% extends "base.html" %}
 
+<!-- 
+    VISTA DE LISTADO DE AERONAVES
+    Permite:
+    - Visualizar la flota de aeronaves disponibles.
+    - Filtrar por código y modelo.
+    - Acceder a la creación y edición de aeronaves.
+    - Carga asíncrona de datos.
+-->
+
 {% block content %}
 
 <h2 class="mb-4 d-flex justify-content-between align-items-center">
@@ -7,7 +16,7 @@
     <a href="{% url 'aeronaves_crear' %}" class="btn btn-dark">➕ Nueva Aeronave</a>
 </h2>
 
-<!-- Filtros -->
+<!-- SECCIÓN DE FILTROS: Búsqueda por código y modelo -->
 <div class="card shadow-sm mb-4">
     <div class="card-body">
         <form id="filtroForm" class="row g-3">
@@ -30,7 +39,7 @@
     </div>
 </div>
 
-<!-- Tabla -->
+<!-- TABLA DE RESULTADOS: Listado de aeronaves -->
 <div class="card shadow-sm">
     <div class="card-body">
 
@@ -58,11 +67,17 @@
 </div>
 
 <script>
+// ===============================
+// LÓGICA DE AERONAVES (Frontend)
+// ===============================
+
+// Función para cargar la tabla de aeronaves desde la API
 async function cargarAeronaves() {
     const tbody = document.getElementById("tablaAeronaves");
     tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-4">Cargando...</td></tr>`;
 
     try {
+        // Petición GET a la API
         const res = await fetch("http://127.0.0.1:8000/aeronaves/");
         const data = await res.json();
 
@@ -75,6 +90,7 @@ async function cargarAeronaves() {
             return;
         }
 
+        // Renderizado de filas
         tbody.innerHTML = "";
         data.forEach(a => {
             tbody.innerHTML += `
@@ -102,6 +118,7 @@ document.getElementById("filtroForm").addEventListener("submit", e => {
     aplicarFiltros();
 });
 
+// Función para aplicar filtros en la tabla de aeronaves
 async function aplicarFiltros() {
     const codigo = document.getElementById("filtroCodigo").value.toLowerCase();
     const modelo = document.getElementById("filtroModelo").value.toLowerCase();

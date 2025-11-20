@@ -1,5 +1,14 @@
 {% extends "base.html" %}
 
+<!-- 
+    VISTA DE LISTADO DE PILOTOS
+    Permite:
+    - Visualizar la lista de pilotos aéreos registrados.
+    - Filtrar por nombre y certificación.
+    - Acceder a la creación y edición de pilotos.
+    - Carga asíncrona de datos.
+-->
+
 {% block content %}
 
 <h2 class="mb-4 d-flex justify-content-between align-items-center">
@@ -7,7 +16,7 @@
     <a href="{% url 'pilotos_crear' %}" class="btn btn-dark">➕ Nuevo Piloto</a>
 </h2>
 
-<!-- Filtros -->
+<!-- SECCIÓN DE FILTROS: Búsqueda por nombre y certificación -->
 <div class="card shadow-sm mb-4">
     <div class="card-body">
         <form id="filtroForm" class="row g-3">
@@ -30,7 +39,7 @@
     </div>
 </div>
 
-<!-- Tabla -->
+<!-- TABLA DE RESULTADOS: Listado de pilotos -->
 <div class="card shadow-sm">
     <div class="card-body">
 
@@ -58,11 +67,17 @@
 </div>
 
 <script>
+// ===============================
+// LÓGICA DE PILOTOS (Frontend)
+// ===============================
+
+// Función para cargar la tabla de pilotos desde la API
 async function cargarPilotos() {
     const tbody = document.getElementById("tablaPilotos");
     tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-4">Cargando...</td></tr>`;
 
     try {
+        // Petición GET a la API
         const res = await fetch("/pilotos/");
         const data = await res.json();
 
@@ -75,6 +90,7 @@ async function cargarPilotos() {
             return;
         }
 
+        // Renderizado de filas
         tbody.innerHTML = "";
         data.forEach(p => {
             tbody.innerHTML += `
@@ -102,11 +118,13 @@ async function cargarPilotos() {
     }
 }
 
+// Evento para el formulario de filtros
 document.getElementById("filtroForm").addEventListener("submit", e => {
     e.preventDefault();
     aplicarFiltros();
 });
 
+// Función para aplicar los filtros en la tabla de pilotos
 async function aplicarFiltros() {
     const nombre = document.getElementById("filtroNombre").value.toLowerCase();
     const cert = document.getElementById("filtroCert").value.toLowerCase();
@@ -127,6 +145,7 @@ async function aplicarFiltros() {
         return;
     }
 
+    // Renderizado de filas filtradas
     filtrados.forEach(p => {
         tbody.innerHTML += `
             <tr>
@@ -146,6 +165,7 @@ async function aplicarFiltros() {
     });
 }
 
+// Carga inicial de pilotos
 cargarPilotos();
 </script>
 

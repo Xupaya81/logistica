@@ -1,5 +1,14 @@
 {% extends "base.html" %}
 
+<!-- 
+    VISTA DE LISTADO DE VEHÍCULOS
+    Permite:
+    - Visualizar la flota de vehículos terrestres.
+    - Filtrar por patente y marca.
+    - Acceder a la creación y edición de vehículos.
+    - Carga asíncrona de datos.
+-->
+
 {% block content %}
 
 <h2 class="mb-4 d-flex justify-content-between align-items-center">
@@ -7,7 +16,7 @@
     <a href="{% url 'vehiculos_crear' %}" class="btn btn-dark">➕ Nuevo Vehículo</a>
 </h2>
 
-<!-- Filtros -->
+<!-- SECCIÓN DE FILTROS: Búsqueda por patente y marca -->
 <div class="card shadow-sm mb-4">
     <div class="card-body">
         <form id="filtroForm" class="row g-3">
@@ -30,7 +39,7 @@
     </div>
 </div>
 
-<!-- Tabla -->
+<!-- TABLA DE RESULTADOS: Listado de vehículos -->
 <div class="card shadow-sm">
     <div class="card-body">
 
@@ -60,9 +69,10 @@
 
 <script>
 // ===============================
-// Cargar tabla desde API
+// LÓGICA DE VEHÍCULOS (Frontend)
 // ===============================
 
+// Función para cargar la tabla de vehículos desde la API
 async function cargarVehiculos() {
     const tbody = document.getElementById("tablaVehiculos");
     tbody.innerHTML = `
@@ -70,6 +80,7 @@ async function cargarVehiculos() {
     `;
 
     try {
+        // Petición GET a la API
         const res = await fetch("http://127.0.0.1:8000/vehiculos/");
         const data = await res.json();
 
@@ -83,6 +94,7 @@ async function cargarVehiculos() {
             return;
         }
 
+        // Renderizado de filas
         tbody.innerHTML = "";
         data.forEach(v => {
             tbody.innerHTML += `

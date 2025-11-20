@@ -1,22 +1,33 @@
 <!DOCTYPE html>
 <html lang="es">
+<!-- 
+    PLANTILLA BASE (base.html)
+    Esta plantilla define la estructura común de todas las páginas del sitio.
+    Incluye:
+    - Encabezado (Head) con Bootstrap y estilos CSS.
+    - Barra de navegación (Navbar) responsiva.
+    - Bloque de contenido principal donde se inyectan las vistas hijas.
+    - Pie de página (Footer).
+    - Scripts JS necesarios (Bootstrap).
+-->
 <head>
     <meta charset="UTF-8">
     <title>Logística Global</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- BOOTSTRAP -->
+    <!-- BOOTSTRAP: Framework CSS para diseño responsivo -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- ICONOS BOOTSTRAP (bi bi-xxxx) -->
+    <!-- ICONOS BOOTSTRAP: Librería de iconos (bi bi-xxxx) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
     <style>
+        /* Estilos personalizados globales */
         body {
             background-color: #f5f7fa;
         }
 
-        /* NAVBAR */
+        /* NAVBAR: Estilos para la barra de navegación oscura */
         .navbar {
             background-color: #1e293b !important;
         }
@@ -36,7 +47,7 @@
             color: white !important;
         }
 
-        /* FOOTER */
+        /* FOOTER: Estilos para el pie de página */
         footer {
             background: #1e293b;
             color: white;
@@ -45,7 +56,7 @@
             margin-top: 40px;
         }
 
-        /* BOTÓN TOGGLER (mobile) */
+        /* BOTÓN TOGGLER (mobile): Ajustes para el botón de menú en móviles */
         .navbar-toggler {
             border-color: #ffffff55;
         }
@@ -58,13 +69,14 @@
 
 <body>
 
-    <!-- NAVBAR RESPONSIVE -->
+    <!-- NAVBAR RESPONSIVE: Menú de navegación superior -->
 <nav class="navbar navbar-expand-lg px-4">
     <a class="navbar-brand d-flex align-items-center" href="/site/">
         <i class="bi bi-box-seam me-2"></i>
         Logística Global
     </a>
 
+    <!-- Botón para colapsar menú en pantallas pequeñas -->
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuNav">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -74,7 +86,7 @@
         <!-- Menú alineado a la derecha -->
         <ul class="navbar-nav ms-auto">
 
-            <!-- Inicio -->
+            <!-- Enlace a Inicio -->
             <li class="nav-item">
                 <a href="/site/" class="nav-link">
                     <i class="bi bi-house-door me-1"></i>Inicio
@@ -82,7 +94,7 @@
             </li>
 
             {% if user.is_authenticated %}
-            <!-- Dropdown Gestión (mega menú compacto) -->
+            <!-- Dropdown Gestión: Menú desplegable con accesos directos a los módulos -->
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
                     <i class="bi bi-grid me-1"></i>Gestión
@@ -106,7 +118,7 @@
                 </ul>
             </li>
 
-            <!-- Logout -->
+            <!-- Botón Logout: Visible solo para usuarios autenticados -->
             <li class="nav-item ms-2">
                 <form action="{% url 'logout' %}" method="post" class="d-inline">
                     {% csrf_token %}
@@ -116,7 +128,7 @@
                 </form>
             </li>
             {% else %}
-            <!-- Login -->
+            <!-- Botón Login: Visible solo para usuarios NO autenticados -->
             <li class="nav-item ms-2">
                 <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm mt-1">
                     <i class="bi bi-box-arrow-in-right me-1"></i>Ingresar
@@ -124,7 +136,7 @@
             </li>
             {% endif %}
 
-            <!-- API Docs -->
+            <!-- Enlace a Documentación API (Swagger) -->
             <li class="nav-item ms-3 border-start ps-3">
                 <a href="/swagger/" class="nav-link" target="_blank">
                     <i class="bi bi-code-slash me-1"></i>API Docs
@@ -135,7 +147,7 @@
     </div>
 </nav>
 
-    <!-- CONTENIDO PRINCIPAL -->
+    <!-- CONTENIDO PRINCIPAL: Aquí se inyectan las vistas específicas -->
     <div class="container mt-4">
         {% block content %}
         {% endblock %}

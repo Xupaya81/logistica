@@ -1,5 +1,14 @@
 {% extends "base.html" %}
 
+<!-- 
+    VISTA DE LISTADO DE RUTAS
+    Permite:
+    - Visualizar las rutas de transporte disponibles.
+    - Filtrar por origen, destino y tipo de transporte.
+    - Acceder a la creación y edición de rutas.
+    - Carga dinámica de datos vía API.
+-->
+
 {% block content %}
 <h2 class="mb-4 d-flex justify-content-between align-items-center">
 
@@ -10,7 +19,7 @@
     </a>
 </h2>
 
-<!-- Filtros -->
+<!-- SECCIÓN DE FILTROS: Búsqueda por origen, destino y tipo -->
 <div class="card shadow-sm mb-4">
     <div class="card-body">
         <form id="filtroForm" class="row g-3">
@@ -42,7 +51,7 @@
     </div>
 </div>
 
-<!-- Tabla -->
+<!-- TABLA DE RESULTADOS: Listado de rutas -->
 <div class="card shadow-sm">
     <div class="card-body">
 
@@ -69,9 +78,14 @@
 </div>
 
 <script>
+    // ===============================
+    // LÓGICA DE RUTAS (Frontend)
+    // ===============================
+
     document.addEventListener("DOMContentLoaded", function() {
         const tabla = document.getElementById("tablaRutas");
 
+        // Función para obtener y renderizar rutas desde la API
         function cargarRutas() {
             fetch("/rutas/")
                 .then(response => response.json())
@@ -82,6 +96,7 @@
                         return;
                     }
 
+                    // Iterar sobre los datos y construir filas de la tabla
                     data.forEach(ruta => {
                         const row = `
                             <tr>
@@ -98,11 +113,12 @@
                     });
                 })
                 .catch(error => {
-                    console.error("Error:", error);
+                    console.error("Error cargando rutas:", error);
                     tabla.innerHTML = `<tr><td colspan="5" class="text-center text-danger">Error al cargar datos.</td></tr>`;
                 });
         }
-
+        
+        // Carga inicial
         cargarRutas();
 
         document.getElementById("filtroForm").addEventListener("submit", function(e) {
@@ -111,5 +127,4 @@
         });
     });
 </script>
-
 {% endblock %}

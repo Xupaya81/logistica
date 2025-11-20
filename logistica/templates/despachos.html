@@ -1,5 +1,14 @@
 {% extends "base.html" %}
 
+<!-- 
+    VISTA DE LISTADO DE DESPACHOS
+    Permite:
+    - Visualizar el historial y estado de los despachos.
+    - Filtrar por código, estado y rango de fechas.
+    - Acceder a la creación de nuevos despachos.
+    - Carga asíncrona de datos.
+-->
+
 {% block content %}
 <h2 class="mb-4 d-flex justify-content-between align-items-center">
 
@@ -11,7 +20,7 @@
 
 </h2>
 
-<!-- Filtros -->
+<!-- SECCIÓN DE FILTROS: Búsqueda avanzada -->
 <div class="card shadow-sm mb-4">
     <div class="card-body">
         <form id="filtroForm" class="row g-3">
@@ -52,7 +61,7 @@
     </div>
 </div>
 
-<!-- Tabla -->
+<!-- TABLA DE RESULTADOS: Listado de despachos -->
 <div class="card shadow-sm">
     <div class="card-body">
 
@@ -80,9 +89,14 @@
 </div>
 
 <script>
+    // ===============================
+    // LÓGICA DE DESPACHOS (Frontend)
+    // ===============================
+
     document.addEventListener("DOMContentLoaded", function() {
         const tabla = document.getElementById("tablaDespachos");
 
+        // Función para obtener y renderizar despachos desde la API
         function cargarDespachos() {
             fetch("/despachos/")
                 .then(response => response.json())
@@ -93,6 +107,7 @@
                         return;
                     }
 
+                    // Iterar sobre los datos y construir filas de la tabla
                     data.forEach(despacho => {
                         const row = `
                             <tr>

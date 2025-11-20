@@ -38,6 +38,10 @@ API_BASE = "http://127.0.0.1:8000/"
 # ==========================================
 
 class VehiculoViewSet(viewsets.ModelViewSet):
+    """
+    API ViewSet para manejar operaciones CRUD de Vehículos.
+    Permite filtrar por tipo de transporte, patente y marca.
+    """
     queryset = Vehiculo.objects.all()
     serializer_class = VehiculoSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -47,21 +51,34 @@ class VehiculoViewSet(viewsets.ModelViewSet):
 
 
 class AeronaveViewSet(viewsets.ModelViewSet):
+    """
+    API ViewSet para manejar operaciones CRUD de Aeronaves.
+    """
     queryset = Aeronave.objects.all()
     serializer_class = AeronaveSerializer
 
 
 class ConductorViewSet(viewsets.ModelViewSet):
+    """
+    API ViewSet para manejar operaciones CRUD de Conductores.
+    """
     queryset = Conductor.objects.all()
     serializer_class = ConductorSerializer
 
 
 class PilotoViewSet(viewsets.ModelViewSet):
+    """
+    API ViewSet para manejar operaciones CRUD de Pilotos.
+    """
     queryset = Piloto.objects.all()
     serializer_class = PilotoSerializer
 
 
 class ClienteViewSet(viewsets.ModelViewSet):
+    """
+    API ViewSet para manejar operaciones CRUD de Clientes.
+    Permite búsqueda por nombre y RUT.
+    """
     queryset = Cliente.objects.all()
     serializer_class = ClienteSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter]
@@ -70,16 +87,25 @@ class ClienteViewSet(viewsets.ModelViewSet):
 
 
 class CargaViewSet(viewsets.ModelViewSet):
+    """
+    API ViewSet para manejar operaciones CRUD de Cargas.
+    """
     queryset = Carga.objects.all()
     serializer_class = CargaSerializer
 
 
 class RutaViewSet(viewsets.ModelViewSet):
+    """
+    API ViewSet para manejar operaciones CRUD de Rutas.
+    """
     queryset = Ruta.objects.all()
     serializer_class = RutaSerializer
 
 
 class DespachoViewSet(viewsets.ModelViewSet):
+    """
+    API ViewSet para manejar operaciones CRUD de Despachos.
+    """
     queryset = Despacho.objects.all()
     serializer_class = DespachoSerializer
 
@@ -90,6 +116,11 @@ class DespachoViewSet(viewsets.ModelViewSet):
 
 @login_required
 def home(request):
+    """
+    Vista principal del dashboard.
+    Recopila estadísticas de despachos, rutas, clientes y flota para mostrar en gráficos.
+    Requiere autenticación.
+    """
     try:
         # Consumir API para obtener conteos
         despachos = requests.get(API_BASE + "despachos/").json()
@@ -133,41 +164,49 @@ def home(request):
 
 @login_required
 def despachos_html(request):
+    """Renderiza la lista de despachos."""
     return render(request, "despachos.html")
 
 
 @login_required
 def rutas_html(request):
+    """Renderiza la lista de rutas."""
     return render(request, "rutas.html")
 
 
 @login_required
 def clientes_html(request):
+    """Renderiza la lista de clientes."""
     return render(request, "clientes.html")
 
 
 @login_required
 def vehiculos_list(request):
+    """Renderiza la lista de vehículos."""
     return render(request, "vehiculos.html")
 
 
 @login_required
 def aeronaves_list(request):
+    """Renderiza la lista de aeronaves."""
     return render(request, "aeronaves.html")
 
 
 @login_required
 def conductores_list(request):
+    """Renderiza la lista de conductores."""
     return render(request, "conductores.html")
 
 
 @login_required
 def pilotos_list(request):
+    """Renderiza la lista de pilotos."""
     return render(request, "pilotos.html")
 
 
 @login_required
 def cargas_list(request):
+    """Renderiza la lista de cargas."""
     return render(request, "cargas.html")
 
 
@@ -177,6 +216,10 @@ def cargas_list(request):
 
 @login_required
 def clientes_crear(request):
+    """
+    Vista para crear un nuevo cliente.
+    Maneja GET para mostrar el formulario y POST para enviar datos a la API.
+    """
     if request.method == "POST":
         data = {
             "nombre": request.POST.get("nombre"),
@@ -198,7 +241,10 @@ def clientes_crear(request):
 
 @login_required
 def clientes_editar(request, pk):
-
+    """
+    Vista para editar un cliente existente.
+    Recupera datos actuales vía API y envía actualizaciones vía PUT.
+    """
     # Obtener cliente desde la API
     cliente = requests.get(API_BASE + f"clientes/{pk}/").json()
 
@@ -223,7 +269,10 @@ def clientes_editar(request, pk):
 
 @login_required
 def clientes_eliminar(request, pk):
-
+    """
+    Vista para eliminar un cliente.
+    Solicita confirmación y ejecuta DELETE contra la API.
+    """
     if request.method == "POST":
 
         resp = requests.delete(API_BASE + f"clientes/{pk}/")
@@ -249,6 +298,9 @@ def clientes_eliminar(request, pk):
 
 @login_required
 def vehiculos_crear(request):
+    """
+    Vista para crear un nuevo vehículo.
+    """
     if request.method == "POST":
         data = {
             "patente": request.POST.get("patente"),
@@ -305,6 +357,9 @@ def vehiculos_eliminar(request, pk):
 
 @login_required
 def aeronaves_crear(request):
+    """
+    Vista para crear una nueva aeronave.
+    """
     if request.method == "POST":
         data = {
             "codigo": request.POST.get("codigo"),
@@ -320,6 +375,9 @@ def aeronaves_crear(request):
 
 @login_required
 def aeronaves_editar(request, pk):
+    """
+    Vista para editar una aeronave existente.
+    """
     if request.method == "POST":
         data = {
             "codigo": request.POST.get("codigo"),
@@ -337,6 +395,9 @@ def aeronaves_editar(request, pk):
 
 @login_required
 def aeronaves_eliminar(request, pk):
+    """
+    Vista para eliminar una aeronave.
+    """
     if request.method == "POST":
         resp = requests.delete(API_BASE + f"aeronaves/{pk}/")
         if resp.status_code in (200, 204):
@@ -354,6 +415,9 @@ def aeronaves_eliminar(request, pk):
 
 @login_required
 def conductores_crear(request):
+    """
+    Vista para crear un nuevo conductor.
+    """
     if request.method == "POST":
         data = {
             "nombre": request.POST.get("nombre"),
@@ -370,6 +434,9 @@ def conductores_crear(request):
 
 @login_required
 def conductores_editar(request, pk):
+    """
+    Vista para editar un conductor existente.
+    """
     if request.method == "POST":
         data = {
             "nombre": request.POST.get("nombre"),
@@ -388,6 +455,9 @@ def conductores_editar(request, pk):
 
 @login_required
 def conductores_eliminar(request, pk):
+    """
+    Vista para eliminar un conductor.
+    """
     if request.method == "POST":
         resp = requests.delete(API_BASE + f"conductores/{pk}/")
         if resp.status_code in (200, 204):
@@ -405,6 +475,9 @@ def conductores_eliminar(request, pk):
 
 @login_required
 def pilotos_crear(request):
+    """
+    Vista para crear un nuevo piloto.
+    """
     if request.method == "POST":
         data = {
             "nombre": request.POST.get("nombre"),
@@ -421,6 +494,9 @@ def pilotos_crear(request):
 
 @login_required
 def pilotos_editar(request, pk):
+    """
+    Vista para editar un piloto existente.
+    """
     if request.method == "POST":
         data = {
             "nombre": request.POST.get("nombre"),
@@ -439,6 +515,9 @@ def pilotos_editar(request, pk):
 
 @login_required
 def pilotos_eliminar(request, pk):
+    """
+    Vista para eliminar un piloto.
+    """
     if request.method == "POST":
         resp = requests.delete(API_BASE + f"pilotos/{pk}/")
         if resp.status_code in (200, 204):
@@ -456,6 +535,10 @@ def pilotos_eliminar(request, pk):
 
 @login_required
 def cargas_crear(request):
+    """
+    Vista para crear una nueva carga.
+    Requiere seleccionar un cliente existente.
+    """
     if request.method == "POST":
         data = {
             "descripcion": request.POST.get("descripcion"),
@@ -475,6 +558,9 @@ def cargas_crear(request):
 
 @login_required
 def cargas_editar(request, pk):
+    """
+    Vista para editar una carga existente.
+    """
     if request.method == "POST":
         data = {
             "descripcion": request.POST.get("descripcion"),
@@ -495,6 +581,9 @@ def cargas_editar(request, pk):
 
 @login_required
 def cargas_eliminar(request, pk):
+    """
+    Vista para eliminar una carga.
+    """
     if request.method == "POST":
         resp = requests.delete(API_BASE + f"cargas/{pk}/")
         if resp.status_code in (200, 204):
@@ -512,6 +601,9 @@ def cargas_eliminar(request, pk):
 
 @login_required
 def rutas_crear(request):
+    """
+    Vista para crear una nueva ruta.
+    """
     if request.method == "POST":
         data = {
             "origen": request.POST.get("origen"),
@@ -528,6 +620,9 @@ def rutas_crear(request):
 
 @login_required
 def rutas_editar(request, pk):
+    """
+    Vista para editar una ruta existente.
+    """
     if request.method == "POST":
         data = {
             "origen": request.POST.get("origen"),
@@ -546,6 +641,9 @@ def rutas_editar(request, pk):
 
 @login_required
 def rutas_eliminar(request, pk):
+    """
+    Vista para eliminar una ruta.
+    """
     if request.method == "POST":
         resp = requests.delete(API_BASE + f"rutas/{pk}/")
         if resp.status_code in (200, 204):
@@ -563,6 +661,10 @@ def rutas_eliminar(request, pk):
 
 @login_required
 def despachos_crear(request):
+    """
+    Vista para crear un nuevo despacho.
+    Requiere cargar listas de rutas, cargas, vehículos, etc. para los selectores.
+    """
     if request.method == "POST":
         data = {
             "codigo": request.POST.get("codigo"),
@@ -593,6 +695,9 @@ def despachos_crear(request):
 
 @login_required
 def despachos_editar(request, pk):
+    """
+    Vista para editar un despacho existente.
+    """
     if request.method == "POST":
         data = {
             "codigo": request.POST.get("codigo"),
@@ -626,6 +731,9 @@ def despachos_editar(request, pk):
 
 @login_required
 def despachos_eliminar(request, pk):
+    """
+    Vista para eliminar un despacho.
+    """
     # Eliminar despacho
     if request.method == "POST":
         resp = requests.delete(API_BASE + f"despachos/{pk}/")

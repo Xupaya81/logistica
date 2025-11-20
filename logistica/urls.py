@@ -13,6 +13,7 @@ from drf_yasg import openapi
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 
+# Configuración de la documentación de la API (Swagger/Redoc)
 schema_view = get_schema_view(
     openapi.Info(
         title="Logística Global API",
@@ -23,28 +24,29 @@ schema_view = get_schema_view(
 )
 
 
-
 urlpatterns = [
 
     # ===========================
     # API REST Framework
     # ===========================
+    # Incluye las rutas definidas en transporte/urls.py (ViewSets)
     path('', include('transporte.urls')),
 
     # ===========================
     # ADMIN
     # ===========================
     path('admin/', admin.site.urls),
+    # Rutas de autenticación (login, logout, password_change, etc.)
     path('accounts/', include('django.contrib.auth.urls')),
 
     # ===========================
-    # JWT
+    # JWT (Autenticación por Token)
     # ===========================
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
     # ===========================
-    # SWAGGER
+    # SWAGGER (Documentación API)
     # ===========================
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='redoc-ui'),
@@ -54,7 +56,7 @@ urlpatterns = [
     # FRONT-END (HTML)
     # ===========================
 
-    # HOME
+    # HOME - Dashboard principal
     path('site/', tviews.home, name='home'),
 
     # ---------- CLIENTES ----------

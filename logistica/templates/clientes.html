@@ -1,5 +1,14 @@
 {% extends "base.html" %}
 
+<!-- 
+    VISTA DE LISTADO DE CLIENTES
+    Permite:
+    - Visualizar la lista de clientes registrados.
+    - Filtrar clientes por nombre o RUT (vía JS).
+    - Acceder a la creación, edición y eliminación de clientes.
+    - Carga de datos asíncrona desde la API REST.
+-->
+
 {% block content %}
 
 <h2 class="mb-4 d-flex justify-content-between align-items-center">
@@ -7,7 +16,7 @@
     <a href="{% url 'clientes_crear' %}" class="btn btn-dark">➕ Nuevo Cliente</a>
 </h2>
 
-<!-- Filtros -->
+<!-- SECCIÓN DE FILTROS: Formulario para búsqueda en tiempo real -->
 <div class="card shadow-sm mb-4">
     <div class="card-body">
         <form id="filtroForm" class="row g-3">
@@ -30,7 +39,7 @@
     </div>
 </div>
 
-<!-- Tabla -->
+<!-- TABLA DE RESULTADOS: Contenedor donde se inyectan los datos vía JS -->
 <div class="card shadow-sm">
     <div class="card-body">
 
@@ -60,9 +69,10 @@
 
 <script>
 // ===============================
-// Cargar tabla desde API
+// LÓGICA DE CLIENTE (Frontend)
 // ===============================
 
+// Función para cargar la tabla de clientes desde la API
 async function cargarClientes() {
     const tbody = document.getElementById("tablaClientes");
     tbody.innerHTML = `
@@ -70,6 +80,7 @@ async function cargarClientes() {
     `;
 
     try {
+        // Petición GET a la API
         const res = await fetch("http://127.0.0.1:8000/clientes/");
         const data = await res.json();
 
@@ -78,6 +89,70 @@ async function cargarClientes() {
                 <tr><td colspan="5" class="text-center text-muted py-4">
                     <div class="fs-5">No hay clientes registrados.</div>
                     <div>Agrega un cliente para comenzar.</div>
+                </td></tr>
+            `;
+            return;
+        }
+
+        // Renderizado de filas
+        tbody.innerHTML = "";
+        data.forEach(c => {
+            tbody.innerHTML += `
+                <tr>
+                    <td>👤 <strong>${c.nombre}</strong></td>
+                    <td>${c.rut}</td>
+                    <td>${c.correo ? "✉️ " + c.correo : "<span class='text-muted'>Sin correo</span>"}</td>
+                    <td>
+                        ${c.activo
+                            ? "<span class='badge bg-success'>Activo</span>"
+                            : "<span class='badge bg-danger'>Inactivo</span>"
+                        }
+                    </td>
+                    <td class="text-end">
+                        <a href="/site/clientes/editar/${c.id}/" class="btn btn-outline-dark btn-sm">
+                            Editar →
+                        </a>
+                    </td>
+                </tr>
+            `;
+        });
+
+    } catch (error) {
+        console.error("Error cargando clientes:", error);
+        tbody.innerHTML = `
+            <tr><td colspan="5" class="text-center text-danger py-4">
+                Error al cargar datos. Asegúrate de que la API esté corriendo.
+            </td></tr>
+        `;
+    }
+}
+
+// Evento de búsqueda (Filtros)
+document.getElementById("filtroForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const nombre = document.getElementById("filtroNombre").value;
+    const rut = document.getElementById("filtroRut").value;
+
+    // Construcción de URL con parámetros de búsqueda
+    let url = "http://127.0.0.1:8000/clientes/?";
+    if (nombre) url += `search=${nombre}&`;
+    if (rut) url += `rut=${rut}`;
+
+    // Reutilizamos la lógica de renderizado (simplificada aquí para el ejemplo)
+    // En una implementación real, refactorizaríamos cargarClientes para aceptar URL
+    const tbody = document.getElementById("tablaClientes");
+    tbody.innerHTML = `
+        <tr><td colspan="5" class="text-center text-muted py-4">Cargando...</td></tr>
+    `;
+
+    try {
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (data.length === 0) {
+            tbody.innerHTML = `
+                <tr><td colspan="5" class="text-center text-muted py-4">
+                    No se encontraron coincidencias.
                 </td></tr>
             `;
             return;
@@ -106,64 +181,14 @@ async function cargarClientes() {
         });
 
     } catch (error) {
+        console.error("Error aplicando filtros:", error);
         tbody.innerHTML = `
-            <tr><td colspan="5" class="text-center py-4 text-danger">
-                Error al cargar clientes
+            <tr><td colspan="5" class="text-center text-danger py-4">
+                Error al aplicar filtros. Inténtalo nuevamente.
             </td></tr>
         `;
-        console.error(error);
     }
-}
-
-// ===============================
-// Filtros (client-side)
-// ===============================
-
-document.getElementById("filtroForm").addEventListener("submit", e => {
-    e.preventDefault();
-    aplicarFiltros();
 });
-
-async function aplicarFiltros() {
-    const nombre = document.getElementById("filtroNombre").value.toLowerCase();
-    const rut = document.getElementById("filtroRut").value.toLowerCase();
-
-    const res = await fetch("http://127.0.0.1:8000/clientes/");
-    const data = await res.json();
-
-    const filtrados = data.filter(c =>
-        c.nombre.toLowerCase().includes(nombre) &&
-        c.rut.toLowerCase().includes(rut)
-    );
-
-    const tbody = document.getElementById("tablaClientes");
-    tbody.innerHTML = "";
-
-    if (filtrados.length === 0) {
-        tbody.innerHTML = `
-            <tr><td colspan="5" class="text-center text-muted py-4">
-                No se encontraron coincidencias.
-            </td></tr>
-        `;
-        return;
-    }
-
-    filtrados.forEach(c => {
-        tbody.innerHTML += `
-            <tr>
-                <td>👤 <strong>${c.nombre}</strong></td>
-                <td>${c.rut}</td>
-                <td>${c.email ? "✉️ " + c.email : "<span class='text-muted'>Sin correo</span>"}</td>
-                <td>${c.activo ? "<span class='badge bg-success'>Activo</span>" : "<span class='badge bg-danger'>Inactivo</span>"}</td>
-                <td class="text-end">
-                    <a href="/site/clientes/editar/${c.id}/" class="btn btn-outline-dark btn-sm">
-                        Editar →
-                    </a>
-                </td>
-            </tr>
-        `;
-    });
-}
 
 // Cargar al inicio
 cargarClientes();
