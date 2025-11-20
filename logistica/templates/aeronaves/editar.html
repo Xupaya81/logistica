@@ -7,34 +7,30 @@
 <div class="card shadow-sm">
     <div class="card-body">
 
-        <form>
+        <form method="post">
+            {% csrf_token %}
 
             <div class="mb-3">
                 <label class="form-label fw-bold">Código aeronave</label>
-                <input type="text" class="form-control" value="AER-320">
+                <input name="codigo" type="text" class="form-control" value="{{ aeronave.codigo }}" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label fw-bold">Modelo</label>
-                <input type="text" class="form-control" value="Airbus A320">
+                <input name="modelo" type="text" class="form-control" value="{{ aeronave.modelo }}" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label fw-bold">Capacidad (kg)</label>
-                <input type="number" class="form-control" value="7000">
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label fw-bold">Estado</label>
-                <select class="form-select">
-                    <option selected>Operativa</option>
-                    <option>Fuera de servicio</option>
-                </select>
+                <input name="capacidad_kg" type="number" class="form-control" value="{{ aeronave.capacidad_kg }}" required>
             </div>
 
             <div class="d-flex justify-content-between mt-4">
-                <a href="/site/aeronaves" class="btn btn-secondary">← Volver</a>
-                <button class="btn btn-dark">Guardar Cambios</button>
+                <a href="{% url 'aeronaves_list' %}" class="btn btn-secondary">← Volver</a>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'aeronaves_eliminar' aeronave.id %}" class="btn btn-danger">Eliminar</a>
+                    <button type="submit" class="btn btn-dark">Guardar Cambios</button>
+                </div>
             </div>
 
         </form>

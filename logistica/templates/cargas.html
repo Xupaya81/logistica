@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="mb-4 d-flex justify-content-between align-items-center">
+    <span>Cargas</span>
+    <a href="{% url 'cargas_crear' %}" class="btn btn-dark">➕ Nueva Carga</a>
+</h2>
+
+<!-- Filtros -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form id="filtroForm" class="row g-3">
+
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Tipo</label>
+                <input id="filtroTipo" type="text" class="form-control" placeholder="Ej: Refrigerada">
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Descripción</label>
+                <input id="filtroDesc" type="text" class="form-control" placeholder="Ej: Alimentos">
+            </div>
+
+            <div class="col-md-4 d-flex align-items-end">
+                <button class="btn btn-primary w-100" type="submit">🔍 Buscar</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<!-- Tabla -->
+<div class="card shadow-sm">
+    <div class="card-body">
+
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Tipo</th>
+                    <th>Descripción</th>
+                    <th>Peso (kg)</th>
+                    <th>Valor</th>
+                    <th>Cliente</th>
+                    <th class="text-end"></th>
+                </tr>
+            </thead>
+
+            <tbody id="tablaCargas">
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-4">
+                        Cargando cargas...
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const tabla = document.getElementById("tablaCargas");
+
+        function cargarCargas() {
+            fetch("/api/cargas/")
+                .then(response => response.json())
+                .then(data => {
+                    tabla.innerHTML = "";
+                    if (data.length === 0) {
+                        tabla.innerHTML = `<tr><td colspan="6" class="text-center text-muted">No hay cargas registradas.</td></tr>`;
+                        return;
+                    }
+
+                    data.forEach(carga => {
+                        const row = `
+                            <tr>
+                                <td>${carga.tipo}</td>
+                                <td>${carga.descripcion}</td>
+                                <td>${carga.peso_kg}</td>
+                                <td>${carga.valor}</td>
+                                <td>${carga.cliente}</td>
+                                <td class="text-end">
+                                    <a href="/site/cargas/editar/${carga.id}" class="btn btn-sm btn-outline-primary">✏️</a>
+                                </td>
+                            </tr>
+                        `;
+                        tabla.innerHTML += row;
+                    });
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    tabla.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Error al cargar datos.</td></tr>`;
+                });
+        }
+
+        cargarCargas();
+
+        document.getElementById("filtroForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            // Implementar lógica de filtrado si es necesario
+            cargarCargas(); 
+        });
+    });
+</script>
+
+{% endblock %}

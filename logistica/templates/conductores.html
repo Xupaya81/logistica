@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="mb-4 d-flex justify-content-between align-items-center">
+    <span>Conductores</span>
+    <a href="{% url 'conductores_crear' %}" class="btn btn-dark">➕ Nuevo Conductor</a>
+</h2>
+
+<!-- Filtros -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form id="filtroForm" class="row g-3">
+
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Nombre</label>
+                <input id="filtroNombre" type="text" class="form-control" placeholder="Ej: Juan">
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Licencia</label>
+                <input id="filtroLicencia" type="text" class="form-control" placeholder="Ej: A1234">
+            </div>
+
+            <div class="col-md-4 d-flex align-items-end">
+                <button class="btn btn-primary w-100" type="submit">🔍 Buscar</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<!-- Tabla -->
+<div class="card shadow-sm">
+    <div class="card-body">
+
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Licencia</th>
+                    <th>Estado</th>
+                    <th class="text-end"></th>
+                </tr>
+            </thead>
+
+            <tbody id="tablaConductores">
+                <tr>
+                    <td colspan="4" class="text-center text-muted py-4">
+                        Cargando conductores...
+                    </td>
+                </tr>
+            </tbody>
+
+        </table>
+
+    </div>
+</div>
+
+<script>
+async function cargarConductores() {
+    const tbody = document.getElementById("tablaConductores");
+    tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-4">Cargando...</td></tr>`;
+
+    try {
+        const res = await fetch("http://127.0.0.1:8000/api/conductores/");
+        const data = await res.json();
+
+        if (data.length === 0) {
+            tbody.innerHTML = `
+                <tr><td colspan="4" class="text-center text-muted py-4">
+                    <div class="fs-5">No hay conductores registrados.</div>
+                </td></tr>
+            `;
+            return;
+        }
+
+        tbody.innerHTML = "";
+        data.forEach(c => {
+            tbody.innerHTML += `
+                <tr>
+                    <td>👤 <strong>${c.nombre} ${c.apellido}</strong></td>
+                    <td>${c.licencia}</td>
+                    <td>
+                        ${c.vigente
+                            ? "<span class='badge bg-success'>Vigente</span>"
+                            : "<span class='badge bg-danger'>No Vigente</span>"
+                        }
+                    </td>
+                    <td class="text-end">
+                        <a href="/site/conductores/editar/${c.id}/" class="btn btn-outline-dark btn-sm">
+                            Editar →
+                        </a>
+                    </td>
+                </tr>
+            `;
+        });
+
+    } catch (error) {
+        console.error(error);
+        tbody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-danger">Error al cargar</td></tr>`;
+    }
+}
+
+document.getElementById("filtroForm").addEventListener("submit", e => {
+    e.preventDefault();
+    aplicarFiltros();
+});
+
+async function aplicarFiltros() {
+    const nombre = document.getElementById("filtroNombre").value.toLowerCase();
+    const licencia = document.getElementById("filtroLicencia").value.toLowerCase();
+
+    const res = await fetch("http://127.0.0.1:8000/api/conductores/");
+    const data = await res.json();
+
+    const filtrados = data.filter(c =>
+        (c.nombre.toLowerCase().includes(nombre) || c.apellido.toLowerCase().includes(nombre)) &&
+        c.licencia.toLowerCase().includes(licencia)
+    );
+
+    const tbody = document.getElementById("tablaConductores");
+    tbody.innerHTML = "";
+
+    if (filtrados.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-4">No se encontraron coincidencias.</td></tr>`;
+        return;
+    }
+
+    filtrados.forEach(c => {
+        tbody.innerHTML += `
+            <tr>
+                <td>👤 <strong>${c.nombre} ${c.apellido}</strong></td>
+                <td>${c.licencia}</td>
+                <td>
+                    ${c.vigente
+                        ? "<span class='badge bg-success'>Vigente</span>"
+                        : "<span class='badge bg-danger'>No Vigente</span>"
+                    }
+                </td>
+                <td class="text-end">
+                    <a href="/site/conductores/editar/${c.id}/" class="btn btn-outline-dark btn-sm">Editar →</a>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+cargarConductores();
+</script>
+
+{% endblock %}

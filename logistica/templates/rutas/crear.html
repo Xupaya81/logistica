@@ -8,46 +8,35 @@
 <div class="card shadow-sm">
     <div class="card-body">
 
-        <form>
+        <form method="post">
+            {% csrf_token %}
 
             <div class="mb-3">
                 <label class="form-label fw-bold">Origen</label>
-                <input type="text" class="form-control" placeholder="Ej: Santiago">
+                <input name="origen" type="text" class="form-control" placeholder="Ej: Santiago" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label fw-bold">Destino</label>
-                <input type="text" class="form-control" placeholder="Ej: Arica">
+                <input name="destino" type="text" class="form-control" placeholder="Ej: Arica" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label fw-bold">Tipo de Transporte</label>
-                <select class="form-select">
-                    <option>Terrestre</option>
-                    <option>Aéreo</option>
-                    <option>Marítimo</option>
+                <select name="tipo_transporte" class="form-select" required>
+                    <option value="TERRESTRE">Terrestre</option>
+                    <option value="AEREO">Aéreo</option>
                 </select>
             </div>
 
             <div class="mb-3">
-                <label class="form-label fw-bold">Cliente</label>
-                <select class="form-select">
-                    <option>Cliente A</option>
-                    <option>Cliente B</option>
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label fw-bold">Estado</label>
-                <select class="form-select">
-                    <option value="1">Activa</option>
-                    <option value="0">Suspendida</option>
-                </select>
+                <label class="form-label fw-bold">Distancia (km)</label>
+                <input name="distancia_km" type="number" class="form-control" placeholder="Ej: 1200" required>
             </div>
 
             <div class="d-flex justify-content-between mt-4">
-                <a href="/site/rutas" class="btn btn-secondary">← Volver</a>
-                <button class="btn btn-dark">Crear Ruta</button>
+                <a href="{% url 'rutas_list' %}" class="btn btn-secondary">← Volver</a>
+                <button type="submit" class="btn btn-dark">Crear Ruta</button>
             </div>
 
         </form>

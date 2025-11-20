@@ -7,57 +7,95 @@
 <div class="card shadow-sm">
     <div class="card-body">
 
-        <form>
+        <form method="post">
+            {% csrf_token %}
 
             <div class="mb-3">
                 <label class="form-label fw-bold">Código del despacho</label>
-                <input type="text" class="form-control" value="DSP-00123">
+                <input name="codigo" type="text" class="form-control" value="{{ despacho.codigo }}" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Fecha</label>
+                <input name="fecha" type="date" class="form-control" value="{{ despacho.fecha }}" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label fw-bold">Ruta</label>
-                <select class="form-select">
-                    <option selected>Santiago → Valparaíso</option>
-                    <option>Otras rutas…</option>
+                <select name="ruta" class="form-select" required>
+                    <option value="">Seleccione una ruta</option>
+                    {% for ruta in rutas %}
+                        <option value="{{ ruta.id }}" {% if ruta.id == despacho.ruta %}selected{% endif %}>{{ ruta.origen }} -> {{ ruta.destino }}</option>
+                    {% endfor %}
                 </select>
             </div>
 
             <div class="mb-3">
-                <label class="form-label fw-bold">Transporte</label>
-                <select class="form-select">
-                    <option selected>Vehículo</option>
-                    <option>Aeronave</option>
+                <label class="form-label fw-bold">Carga</label>
+                <select name="carga" class="form-select" required>
+                    <option value="">Seleccione una carga</option>
+                    {% for carga in cargas %}
+                        <option value="{{ carga.id }}" {% if carga.id == despacho.carga %}selected{% endif %}>{{ carga.descripcion }} ({{ carga.peso_kg }}kg)</option>
+                    {% endfor %}
                 </select>
             </div>
 
             <div class="mb-3">
                 <label class="form-label fw-bold">Vehículo (si aplica)</label>
-                <input type="text" class="form-control" value="ABCD-12">
+                <select name="vehiculo" class="form-select">
+                    <option value="">Seleccione un vehículo</option>
+                    {% for vehiculo in vehiculos %}
+                        <option value="{{ vehiculo.id }}" {% if vehiculo.id == despacho.vehiculo %}selected{% endif %}>{{ vehiculo.patente }} - {{ vehiculo.marca }}</option>
+                    {% endfor %}
+                </select>
             </div>
 
             <div class="mb-3">
                 <label class="form-label fw-bold">Aeronave (si aplica)</label>
-                <input type="text" class="form-control" value="">
+                <select name="aeronave" class="form-select">
+                    <option value="">Seleccione una aeronave</option>
+                    {% for aeronave in aeronaves %}
+                        <option value="{{ aeronave.id }}" {% if aeronave.id == despacho.aeronave %}selected{% endif %}>{{ aeronave.codigo }} - {{ aeronave.modelo }}</option>
+                    {% endfor %}
+                </select>
             </div>
 
             <div class="mb-3">
-                <label class="form-label fw-bold">Fecha</label>
-                <input type="date" class="form-control" value="2025-01-10">
+                <label class="form-label fw-bold">Conductor (si aplica)</label>
+                <select name="conductor" class="form-select">
+                    <option value="">Seleccione un conductor</option>
+                    {% for conductor in conductores %}
+                        <option value="{{ conductor.id }}" {% if conductor.id == despacho.conductor %}selected{% endif %}>{{ conductor.nombre }} {{ conductor.apellido }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Piloto (si aplica)</label>
+                <select name="piloto" class="form-select">
+                    <option value="">Seleccione un piloto</option>
+                    {% for piloto in pilotos %}
+                        <option value="{{ piloto.id }}" {% if piloto.id == despacho.piloto %}selected{% endif %}>{{ piloto.nombre }} {{ piloto.apellido }}</option>
+                    {% endfor %}
+                </select>
             </div>
 
             <div class="mb-3">
                 <label class="form-label fw-bold">Estado</label>
-                <select class="form-select">
-                    <option>PENDIENTE</option>
-                    <option selected>EN_TRANSITO</option>
-                    <option>ENTREGADO</option>
-                    <option>CANCELADO</option>
+                <select name="estado" class="form-select" required>
+                    <option value="PENDIENTE" {% if despacho.estado == 'PENDIENTE' %}selected{% endif %}>Pendiente</option>
+                    <option value="EN_RUTA" {% if despacho.estado == 'EN_RUTA' %}selected{% endif %}>En Ruta</option>
+                    <option value="ENTREGADO" {% if despacho.estado == 'ENTREGADO' %}selected{% endif %}>Entregado</option>
+                    <option value="CANCELADO" {% if despacho.estado == 'CANCELADO' %}selected{% endif %}>Cancelado</option>
                 </select>
             </div>
 
             <div class="d-flex justify-content-between mt-4">
-                <a href="/site/despachos" class="btn btn-secondary">← Volver</a>
-                <button class="btn btn-dark">Guardar cambios</button>
+                <a href="{% url 'despachos_list' %}" class="btn btn-secondary">← Volver</a>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'despachos_eliminar' despacho.id %}" class="btn btn-danger">Eliminar</a>
+                    <button type="submit" class="btn btn-dark">Guardar Cambios</button>
+                </div>
             </div>
 
         </form>

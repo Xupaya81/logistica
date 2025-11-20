@@ -9,17 +9,20 @@
 
         <p class="fs-5">
             ¿Estás seguro que deseas eliminar la aeronave
-            <strong>AER-320</strong>?
+            <strong>{{ aeronave.codigo }} ({{ aeronave.modelo }})</strong>?
         </p>
 
         <p class="text-muted">
             Esta acción no se puede deshacer.
         </p>
 
-        <div class="d-flex justify-content-between mt-4">
-            <a href="/site/aeronaves" class="btn btn-secondary">Cancelar</a>
-            <button class="btn btn-danger">Eliminar definitivamente</button>
-        </div>
+        <form method="post" class="mt-4">
+            {% csrf_token %}
+            <div class="d-flex justify-content-between">
+                <a href="{% url 'aeronaves_list' %}" class="btn btn-secondary">Cancelar</a>
+                <button type="submit" class="btn btn-danger">Eliminar definitivamente</button>
+            </div>
+        </form>
 
     </div>
 </div>

@@ -13,12 +13,13 @@ ESTADO_DESPACHO = [
     ('PENDIENTE', 'Pendiente'),
     ('EN_RUTA', 'En Ruta'),
     ('ENTREGADO', 'Entregado'),
+    ('CANCELADO', 'Cancelado'),
 ]
-
 
 # ------------------------------------------------
 # MODELOS PRINCIPALES
 # ------------------------------------------------
+
 
 class Vehiculo(models.Model):
     patente = models.CharField(max_length=10, unique=True)
@@ -44,7 +45,7 @@ class Conductor(models.Model):
     nombre = models.CharField(max_length=50)
     apellido = models.CharField(max_length=50)
     licencia = models.CharField(max_length=20, unique=True)
-    vigente = models.BooleanField(default=True)
+    vigente = models.BooleanField(default=True)  # estado
 
     def __str__(self):
         return f"{self.nombre} {self.apellido}"
@@ -54,7 +55,7 @@ class Piloto(models.Model):
     nombre = models.CharField(max_length=50)
     apellido = models.CharField(max_length=50)
     certificacion = models.CharField(max_length=100)
-    vigente = models.BooleanField(default=True)
+    vigente = models.BooleanField(default=True)  # estado
 
     def __str__(self):
         return f"{self.nombre} {self.apellido}"
@@ -64,7 +65,8 @@ class Cliente(models.Model):
     nombre = models.CharField(max_length=100)
     rut = models.CharField(max_length=15, unique=True)
     correo = models.EmailField()
-    telefono = models.CharField(max_length=20)
+    telefono = models.CharField(max_length=20, blank=True)
+    activo = models.BooleanField(default=True)  # ← AGREGADO porque tu HTML lo usa
 
     def __str__(self):
         return self.nombre
@@ -85,7 +87,7 @@ class Ruta(models.Model):
     origen = models.CharField(max_length=100)
     destino = models.CharField(max_length=100)
     tipo_transporte = models.CharField(max_length=15, choices=TIPO_TRANSPORTE)
-    distancia_km = models.IntegerField()
+    distancia_km = models.IntegerField(default=0)  # ← AGREGADO para no fallar
 
     def __str__(self):
         return f"{self.origen} → {self.destino}"

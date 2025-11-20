@@ -1,32 +1,40 @@
-"""Vistas y viewsets para la app `transporte`.
-
-Contiene ViewSets para la API REST y vistas que renderizan
-plantillas HTML para el frontend Bootstrap.
+"""
+Vistas y ViewSets para la app transporte.
+Incluye:
+- API REST (ViewSets)
+- Vistas HTML (list, crear, editar, eliminar)
+- Integración CRUD vía API usando requests
 """
 
-from django.shortcuts import render
+import requests
+from django.shortcuts import render, redirect
+from django.contrib import messages
 
 from rest_framework import viewsets
-from rest_framework.filters import OrderingFilter, SearchFilter
+from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.permissions import IsAuthenticated
-
 from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import (
-    Aeronave, Carga, Cliente, Conductor, Despacho,
-    Piloto, Ruta, Vehiculo,
+    Vehiculo, Aeronave, Conductor, Piloto, Cliente,
+    Carga, Ruta, Despacho
 )
 
 from .serializers import (
-    AeronaveSerializer, CargaSerializer, ClienteSerializer,
-    ConductorSerializer, DespachoSerializer, PilotoSerializer,
-    RutaSerializer, VehiculoSerializer,
+    VehiculoSerializer, AeronaveSerializer, ConductorSerializer, PilotoSerializer,
+    ClienteSerializer, CargaSerializer, RutaSerializer, DespachoSerializer
 )
 
+# ==========================================
+# CONFIG API LOCAL
+# ==========================================
 
-# ============================================================
-# VIEWSETS PRINCIPALES
-# ============================================================
+API_BASE = "http://127.0.0.1:8000/"
+
+
+# ==========================================
+# VIEWSETS DEL API (no tocar)
+# ==========================================
 
 class VehiculoViewSet(viewsets.ModelViewSet):
     queryset = Vehiculo.objects.all()
@@ -40,24 +48,18 @@ class VehiculoViewSet(viewsets.ModelViewSet):
 class AeronaveViewSet(viewsets.ModelViewSet):
     queryset = Aeronave.objects.all()
     serializer_class = AeronaveSerializer
-    filter_backends = [DjangoFilterBackend, SearchFilter]
-    search_fields = ['codigo', 'modelo']
 
 
 class ConductorViewSet(viewsets.ModelViewSet):
     queryset = Conductor.objects.all()
     serializer_class = ConductorSerializer
-    permission_classes = [IsAuthenticated]  # protegido según rúbrica
-    filter_backends = [SearchFilter]
-    search_fields = ['nombre', 'apellido', 'licencia']
+    permission_classes = [IsAuthenticated]
 
 
 class PilotoViewSet(viewsets.ModelViewSet):
     queryset = Piloto.objects.all()
     serializer_class = PilotoSerializer
-    permission_classes = [IsAuthenticated]  # protegido según rúbrica
-    filter_backends = [SearchFilter]
-    search_fields = ['nombre', 'apellido', 'certificacion']
+    permission_classes = [IsAuthenticated]
 
 
 class ClienteViewSet(viewsets.ModelViewSet):
@@ -71,164 +73,497 @@ class ClienteViewSet(viewsets.ModelViewSet):
 class CargaViewSet(viewsets.ModelViewSet):
     queryset = Carga.objects.all()
     serializer_class = CargaSerializer
-    filter_backends = [DjangoFilterBackend, SearchFilter]
-    filterset_fields = ['tipo', 'cliente']
-    search_fields = ['descripcion']
 
 
 class RutaViewSet(viewsets.ModelViewSet):
     queryset = Ruta.objects.all()
     serializer_class = RutaSerializer
-    filter_backends = [DjangoFilterBackend, SearchFilter]
-    filterset_fields = ['origen', 'destino', 'tipo_transporte']
-    search_fields = ['origen', 'destino']
 
 
 class DespachoViewSet(viewsets.ModelViewSet):
     queryset = Despacho.objects.all()
     serializer_class = DespachoSerializer
-    permission_classes = [IsAuthenticated]  # protegido según rúbrica
-
-    filter_backends = [DjangoFilterBackend, SearchFilter]
-    filterset_fields = ['ruta', 'estado', 'vehiculo', 'aeronave']
-    search_fields = ['codigo']
+    permission_classes = [IsAuthenticated]
 
 
-
-# ============================================================
-# VISTAS ADICIONALES (HTML)
+# ==========================================
+# VISTAS HTML PRINCIPALES
+# ==========================================
 
 def home(request):
-    """Renderiza el panel principal del frontend (Bootstrap)."""
     return render(request, "home.html")
 
 
 def despachos_html(request):
-    """Renderiza la lista de despachos usando `despachos.html`."""
-    contexto = {"despachos": Despacho.objects.all()}
-    return render(request, "despachos.html", contexto)
+    return render(request, "despachos.html")
 
 
 def rutas_html(request):
-    """Renderiza la vista de rutas."""
-    return render(request, "rutas.html", {"rutas": Ruta.objects.all()})
+    return render(request, "rutas.html")
 
 
 def clientes_html(request):
-    """Renderiza la vista de clientes."""
-    return render(request, "clientes.html", {"clientes": Cliente.objects.all()})
+    return render(request, "clientes.html")
 
 
-# ============================================================
-# VISTAS CRUD (formularios estáticos)
+def vehiculos_list(request):
+    return render(request, "vehiculos.html")
 
 
-def vehiculos_crear(request):
-    return render(request, "vehiculos/crear.html")
+def aeronaves_list(request):
+    return render(request, "aeronaves.html")
 
 
-def vehiculos_editar(request, pk):
-    return render(request, "vehiculos/editar.html")
+def conductores_list(request):
+    return render(request, "conductores.html")
 
 
-def vehiculos_eliminar(request, pk):
-    return render(request, "vehiculos/eliminar.html")
+def pilotos_list(request):
+    return render(request, "pilotos.html")
 
 
-def aeronaves_crear(request):
-    return render(request, "aeronaves/crear.html")
+def cargas_list(request):
+    return render(request, "cargas.html")
 
 
-def aeronaves_editar(request, pk):
-    return render(request, "aeronaves/editar.html")
-
-
-def aeronaves_eliminar(request, pk):
-    return render(request, "aeronaves/eliminar.html")
-
-
-def conductores_crear(request):
-    return render(request, "conductores/crear.html")
-
-
-def conductores_editar(request, pk):
-    return render(request, "conductores/editar.html")
-
-
-def conductores_eliminar(request, pk):
-    return render(request, "conductores/eliminar.html")
-
-
-def pilotos_crear(request):
-    return render(request, "pilotos/crear.html")
-
-
-def pilotos_editar(request, pk):
-    return render(request, "pilotos/editar.html")
-
-
-def pilotos_eliminar(request, pk):
-    return render(request, "pilotos/eliminar.html")
-
+# ==========================================
+# CRUD CLIENTES (HTML + API)
+# ==========================================
 
 def clientes_crear(request):
+    if request.method == "POST":
+        data = {
+            "nombre": request.POST.get("nombre"),
+            "rut": request.POST.get("rut"),
+            "email": request.POST.get("correo"),
+            "activo": request.POST.get("estado") == "1",
+        }
+
+        resp = requests.post(API_BASE + "clientes/", json=data)
+
+        if resp.status_code == 201:
+            messages.success(request, "Cliente creado exitosamente.")
+            return redirect("clientes_list")
+
+        messages.error(request, "Error al crear cliente.")
+    
     return render(request, "clientes/crear.html")
 
 
 def clientes_editar(request, pk):
-    return render(request, "clientes/editar.html")
+
+    # Obtener cliente desde la API
+    cliente = requests.get(API_BASE + f"clientes/{pk}/").json()
+
+    if request.method == "POST":
+        data = {
+            "nombre": request.POST.get("nombre"),
+            "rut": request.POST.get("rut"),
+            "email": request.POST.get("correo"),
+            "activo": request.POST.get("estado") == "1",
+        }
+
+        resp = requests.put(API_BASE + f"clientes/{pk}/", json=data)
+
+        if resp.status_code in (200, 202):
+            messages.success(request, "Cliente actualizado correctamente.")
+            return redirect("clientes_list")
+
+        messages.error(request, "Error al actualizar cliente.")
+
+    return render(request, "clientes/editar.html", {"cliente": cliente})
 
 
 def clientes_eliminar(request, pk):
-    return render(request, "clientes/eliminar.html")
 
+    if request.method == "POST":
+
+        resp = requests.delete(API_BASE + f"clientes/{pk}/")
+
+        if resp.status_code in (200, 204):
+            messages.success(request, "Cliente eliminado.")
+            return redirect("clientes_list")
+
+        messages.error(request, "Error al eliminar cliente.")
+
+    cliente = requests.get(API_BASE + f"clientes/{pk}/").json()
+
+    return render(request, "clientes/eliminar.html", {"cliente": cliente})
+
+
+# ==========================================
+# CRUD GENERALES (PLANTILLAS ESTÁTICAS)
+# ==========================================
+
+# ==========================================
+# CRUD VEHICULOS
+# ==========================================
+
+def vehiculos_crear(request):
+    if request.method == "POST":
+        data = {
+            "patente": request.POST.get("patente"),
+            "marca": request.POST.get("marca"),
+            "modelo": request.POST.get("modelo"),
+            "capacidad_kg": request.POST.get("capacidad_kg"),
+            "tipo_transporte": request.POST.get("tipo_transporte"),
+        }
+        resp = requests.post(API_BASE + "vehiculos/", json=data)
+        if resp.status_code == 201:
+            messages.success(request, "Vehículo creado exitosamente.")
+            return redirect("vehiculos_list")
+        messages.error(request, "Error al crear vehículo.")
+    
+    return render(request, "vehiculos/crear.html")
+
+
+def vehiculos_editar(request, pk):
+    if request.method == "POST":
+        data = {
+            "patente": request.POST.get("patente"),
+            "marca": request.POST.get("marca"),
+            "modelo": request.POST.get("modelo"),
+            "capacidad_kg": request.POST.get("capacidad_kg"),
+            "tipo_transporte": request.POST.get("tipo_transporte"),
+        }
+        resp = requests.put(API_BASE + f"vehiculos/{pk}/", json=data)
+        if resp.status_code in (200, 202):
+            messages.success(request, "Vehículo actualizado.")
+            return redirect("vehiculos_list")
+        messages.error(request, "Error al actualizar vehículo.")
+
+    vehiculo = requests.get(API_BASE + f"vehiculos/{pk}/").json()
+    return render(request, "vehiculos/editar.html", {"vehiculo": vehiculo})
+
+
+def vehiculos_eliminar(request, pk):
+    if request.method == "POST":
+        resp = requests.delete(API_BASE + f"vehiculos/{pk}/")
+        if resp.status_code in (200, 204):
+            messages.success(request, "Vehículo eliminado.")
+            return redirect("vehiculos_list")
+        messages.error(request, "Error al eliminar vehículo.")
+
+    vehiculo = requests.get(API_BASE + f"vehiculos/{pk}/").json()
+    return render(request, "vehiculos/eliminar.html", {"vehiculo": vehiculo})
+
+
+# ==========================================
+# CRUD AERONAVES
+# ==========================================
+
+def aeronaves_crear(request):
+    if request.method == "POST":
+        data = {
+            "codigo": request.POST.get("codigo"),
+            "modelo": request.POST.get("modelo"),
+            "capacidad_kg": request.POST.get("capacidad_kg"),
+        }
+        resp = requests.post(API_BASE + "aeronaves/", json=data)
+        if resp.status_code == 201:
+            messages.success(request, "Aeronave creada exitosamente.")
+            return redirect("aeronaves_list")
+        messages.error(request, "Error al crear aeronave.")
+    return render(request, "aeronaves/crear.html")
+
+def aeronaves_editar(request, pk):
+    if request.method == "POST":
+        data = {
+            "codigo": request.POST.get("codigo"),
+            "modelo": request.POST.get("modelo"),
+            "capacidad_kg": request.POST.get("capacidad_kg"),
+        }
+        resp = requests.put(API_BASE + f"aeronaves/{pk}/", json=data)
+        if resp.status_code in (200, 202):
+            messages.success(request, "Aeronave actualizada.")
+            return redirect("aeronaves_list")
+        messages.error(request, "Error al actualizar aeronave.")
+
+    aeronave = requests.get(API_BASE + f"aeronaves/{pk}/").json()
+    return render(request, "aeronaves/editar.html", {"aeronave": aeronave})
+
+def aeronaves_eliminar(request, pk):
+    if request.method == "POST":
+        resp = requests.delete(API_BASE + f"aeronaves/{pk}/")
+        if resp.status_code in (200, 204):
+            messages.success(request, "Aeronave eliminada.")
+            return redirect("aeronaves_list")
+        messages.error(request, "Error al eliminar aeronave.")
+
+    aeronave = requests.get(API_BASE + f"aeronaves/{pk}/").json()
+    return render(request, "aeronaves/eliminar.html", {"aeronave": aeronave})
+
+
+# ==========================================
+# CRUD CONDUCTORES
+# ==========================================
+
+def conductores_crear(request):
+    if request.method == "POST":
+        data = {
+            "nombre": request.POST.get("nombre"),
+            "apellido": request.POST.get("apellido"),
+            "licencia": request.POST.get("licencia"),
+            "vigente": request.POST.get("vigente") == "1",
+        }
+        resp = requests.post(API_BASE + "conductores/", json=data)
+        if resp.status_code == 201:
+            messages.success(request, "Conductor creado exitosamente.")
+            return redirect("conductores_list")
+        messages.error(request, "Error al crear conductor.")
+    return render(request, "conductores/crear.html")
+
+def conductores_editar(request, pk):
+    if request.method == "POST":
+        data = {
+            "nombre": request.POST.get("nombre"),
+            "apellido": request.POST.get("apellido"),
+            "licencia": request.POST.get("licencia"),
+            "vigente": request.POST.get("vigente") == "1",
+        }
+        resp = requests.put(API_BASE + f"conductores/{pk}/", json=data)
+        if resp.status_code in (200, 202):
+            messages.success(request, "Conductor actualizado.")
+            return redirect("conductores_list")
+        messages.error(request, "Error al actualizar conductor.")
+
+    conductor = requests.get(API_BASE + f"conductores/{pk}/").json()
+    return render(request, "conductores/editar.html", {"conductor": conductor})
+
+def conductores_eliminar(request, pk):
+    if request.method == "POST":
+        resp = requests.delete(API_BASE + f"conductores/{pk}/")
+        if resp.status_code in (200, 204):
+            messages.success(request, "Conductor eliminado.")
+            return redirect("conductores_list")
+        messages.error(request, "Error al eliminar conductor.")
+
+    conductor = requests.get(API_BASE + f"conductores/{pk}/").json()
+    return render(request, "conductores/eliminar.html", {"conductor": conductor})
+
+
+# ==========================================
+# CRUD PILOTOS
+# ==========================================
+
+def pilotos_crear(request):
+    if request.method == "POST":
+        data = {
+            "nombre": request.POST.get("nombre"),
+            "apellido": request.POST.get("apellido"),
+            "certificacion": request.POST.get("certificacion"),
+            "vigente": request.POST.get("vigente") == "1",
+        }
+        resp = requests.post(API_BASE + "pilotos/", json=data)
+        if resp.status_code == 201:
+            messages.success(request, "Piloto creado exitosamente.")
+            return redirect("pilotos_list")
+        messages.error(request, "Error al crear piloto.")
+    return render(request, "pilotos/crear.html")
+
+def pilotos_editar(request, pk):
+    if request.method == "POST":
+        data = {
+            "nombre": request.POST.get("nombre"),
+            "apellido": request.POST.get("apellido"),
+            "certificacion": request.POST.get("certificacion"),
+            "vigente": request.POST.get("vigente") == "1",
+        }
+        resp = requests.put(API_BASE + f"pilotos/{pk}/", json=data)
+        if resp.status_code in (200, 202):
+            messages.success(request, "Piloto actualizado.")
+            return redirect("pilotos_list")
+        messages.error(request, "Error al actualizar piloto.")
+
+    piloto = requests.get(API_BASE + f"pilotos/{pk}/").json()
+    return render(request, "pilotos/editar.html", {"piloto": piloto})
+
+def pilotos_eliminar(request, pk):
+    if request.method == "POST":
+        resp = requests.delete(API_BASE + f"pilotos/{pk}/")
+        if resp.status_code in (200, 204):
+            messages.success(request, "Piloto eliminado.")
+            return redirect("pilotos_list")
+        messages.error(request, "Error al eliminar piloto.")
+
+    piloto = requests.get(API_BASE + f"pilotos/{pk}/").json()
+    return render(request, "pilotos/eliminar.html", {"piloto": piloto})
+
+
+# ==========================================
+# CRUD CARGAS
+# ==========================================
 
 def cargas_crear(request):
-    return render(request, "cargas/crear.html")
-
+    if request.method == "POST":
+        data = {
+            "descripcion": request.POST.get("descripcion"),
+            "peso_kg": request.POST.get("peso_kg"),
+            "tipo": request.POST.get("tipo"),
+            "valor": request.POST.get("valor"),
+            "cliente": request.POST.get("cliente"),
+        }
+        resp = requests.post(API_BASE + "cargas/", json=data)
+        if resp.status_code == 201:
+            messages.success(request, "Carga creada exitosamente.")
+            return redirect("cargas_list")
+        messages.error(request, "Error al crear carga.")
+    
+    clientes = requests.get(API_BASE + "clientes/").json()
+    return render(request, "cargas/crear.html", {"clientes": clientes})
 
 def cargas_editar(request, pk):
-    return render(request, "cargas/editar.html")
+    if request.method == "POST":
+        data = {
+            "descripcion": request.POST.get("descripcion"),
+            "peso_kg": request.POST.get("peso_kg"),
+            "tipo": request.POST.get("tipo"),
+            "valor": request.POST.get("valor"),
+            "cliente": request.POST.get("cliente"),
+        }
+        resp = requests.put(API_BASE + f"cargas/{pk}/", json=data)
+        if resp.status_code in (200, 202):
+            messages.success(request, "Carga actualizada.")
+            return redirect("cargas_list")
+        messages.error(request, "Error al actualizar carga.")
 
+    carga = requests.get(API_BASE + f"cargas/{pk}/").json()
+    clientes = requests.get(API_BASE + "clientes/").json()
+    return render(request, "cargas/editar.html", {"carga": carga, "clientes": clientes})
 
 def cargas_eliminar(request, pk):
-    return render(request, "cargas/eliminar.html")
+    if request.method == "POST":
+        resp = requests.delete(API_BASE + f"cargas/{pk}/")
+        if resp.status_code in (200, 204):
+            messages.success(request, "Carga eliminada.")
+            return redirect("cargas_list")
+        messages.error(request, "Error al eliminar carga.")
 
+    carga = requests.get(API_BASE + f"cargas/{pk}/").json()
+    return render(request, "cargas/eliminar.html", {"carga": carga})
+
+
+# ==========================================
+# CRUD RUTAS
+# ==========================================
 
 def rutas_crear(request):
+    if request.method == "POST":
+        data = {
+            "origen": request.POST.get("origen"),
+            "destino": request.POST.get("destino"),
+            "tipo_transporte": request.POST.get("tipo_transporte"),
+            "distancia_km": request.POST.get("distancia_km"),
+        }
+        resp = requests.post(API_BASE + "rutas/", json=data)
+        if resp.status_code == 201:
+            messages.success(request, "Ruta creada exitosamente.")
+            return redirect("rutas_list")
+        messages.error(request, "Error al crear ruta.")
     return render(request, "rutas/crear.html")
 
-
 def rutas_editar(request, pk):
-    return render(request, "rutas/editar.html")
+    if request.method == "POST":
+        data = {
+            "origen": request.POST.get("origen"),
+            "destino": request.POST.get("destino"),
+            "tipo_transporte": request.POST.get("tipo_transporte"),
+            "distancia_km": request.POST.get("distancia_km"),
+        }
+        resp = requests.put(API_BASE + f"rutas/{pk}/", json=data)
+        if resp.status_code in (200, 202):
+            messages.success(request, "Ruta actualizada.")
+            return redirect("rutas_list")
+        messages.error(request, "Error al actualizar ruta.")
 
+    ruta = requests.get(API_BASE + f"rutas/{pk}/").json()
+    return render(request, "rutas/editar.html", {"ruta": ruta})
 
 def rutas_eliminar(request, pk):
-    return render(request, "rutas/eliminar.html")
+    if request.method == "POST":
+        resp = requests.delete(API_BASE + f"rutas/{pk}/")
+        if resp.status_code in (200, 204):
+            messages.success(request, "Ruta eliminada.")
+            return redirect("rutas_list")
+        messages.error(request, "Error al eliminar ruta.")
 
+    ruta = requests.get(API_BASE + f"rutas/{pk}/").json()
+    return render(request, "rutas/eliminar.html", {"ruta": ruta})
+
+
+# ==========================================
+# CRUD DESPACHOS
+# ==========================================
 
 def despachos_crear(request):
-    return render(request, "despachos/crear.html")
+    if request.method == "POST":
+        data = {
+            "codigo": request.POST.get("codigo"),
+            "fecha": request.POST.get("fecha"),
+            "ruta": request.POST.get("ruta"),
+            "carga": request.POST.get("carga"),
+            "vehiculo": request.POST.get("vehiculo") or None,
+            "aeronave": request.POST.get("aeronave") or None,
+            "conductor": request.POST.get("conductor") or None,
+            "piloto": request.POST.get("piloto") or None,
+            "estado": request.POST.get("estado"),
+        }
+        resp = requests.post(API_BASE + "despachos/", json=data)
+        if resp.status_code == 201:
+            messages.success(request, "Despacho creado exitosamente.")
+            return redirect("despachos_list")
+        messages.error(request, "Error al crear despacho.")
 
+    context = {
+        "rutas": requests.get(API_BASE + "rutas/").json(),
+        "cargas": requests.get(API_BASE + "cargas/").json(),
+        "vehiculos": requests.get(API_BASE + "vehiculos/").json(),
+        "aeronaves": requests.get(API_BASE + "aeronaves/").json(),
+        "conductores": requests.get(API_BASE + "conductores/").json(),
+        "pilotos": requests.get(API_BASE + "pilotos/").json(),
+    }
+    return render(request, "despachos/crear.html", context)
 
 def despachos_editar(request, pk):
-    return render(request, "despachos/editar.html")
+    if request.method == "POST":
+        data = {
+            "codigo": request.POST.get("codigo"),
+            "fecha": request.POST.get("fecha"),
+            "ruta": request.POST.get("ruta"),
+            "carga": request.POST.get("carga"),
+            "vehiculo": request.POST.get("vehiculo") or None,
+            "aeronave": request.POST.get("aeronave") or None,
+            "conductor": request.POST.get("conductor") or None,
+            "piloto": request.POST.get("piloto") or None,
+            "estado": request.POST.get("estado"),
+        }
+        resp = requests.put(API_BASE + f"despachos/{pk}/", json=data)
+        if resp.status_code in (200, 202):
+            messages.success(request, "Despacho actualizado.")
+            return redirect("despachos_list")
+        messages.error(request, "Error al actualizar despacho.")
+
+    despacho = requests.get(API_BASE + f"despachos/{pk}/").json()
+    context = {
+        "despacho": despacho,
+        "rutas": requests.get(API_BASE + "rutas/").json(),
+        "cargas": requests.get(API_BASE + "cargas/").json(),
+        "vehiculos": requests.get(API_BASE + "vehiculos/").json(),
+        "aeronaves": requests.get(API_BASE + "aeronaves/").json(),
+        "conductores": requests.get(API_BASE + "conductores/").json(),
+        "pilotos": requests.get(API_BASE + "pilotos/").json(),
+    }
+    return render(request, "despachos/editar.html", context)
 
 
 def despachos_eliminar(request, pk):
-    return render(request, "despachos/eliminar.html")
+    # Eliminar despacho
+    if request.method == "POST":
+        resp = requests.delete(API_BASE + f"despachos/{pk}/")
+        if resp.status_code in (200, 204):
+            messages.success(request, "Despacho eliminado.")
+            return redirect("despachos_list")
+        messages.error(request, "Error al eliminar despacho.")
 
-def vehiculos_list(request):
-    return render(request, "vehiculos/list.html")
-
-def aeronaves_list(request):
-    return render(request, "aeronaves/list.html")
-
-def cargas_list(request):
-    return render(request, "cargas/list.html")
-
-def conductores_list(request):
-    return render(request, "conductores/list.html")
-
-def pilotos_list(request):
-    return render(request, "pilotos/list.html")
+    despacho = requests.get(API_BASE + f"despachos/{pk}/").json()
+    return render(request, "despachos/eliminar.html", {"despacho": despacho})

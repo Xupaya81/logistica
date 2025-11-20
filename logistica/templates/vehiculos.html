@@ -3,8 +3,8 @@
 {% block content %}
 
 <h2 class="mb-4 d-flex justify-content-between align-items-center">
-    <span>Clientes</span>
-    <a href="{% url 'clientes_crear' %}" class="btn btn-dark">➕ Nuevo Cliente</a>
+    <span>Vehículos</span>
+    <a href="{% url 'vehiculos_crear' %}" class="btn btn-dark">➕ Nuevo Vehículo</a>
 </h2>
 
 <!-- Filtros -->
@@ -13,13 +13,13 @@
         <form id="filtroForm" class="row g-3">
 
             <div class="col-md-4">
-                <label class="form-label fw-bold">Nombre o Razón Social</label>
-                <input id="filtroNombre" type="text" class="form-control" placeholder="Ej: Transportes Ruiz LTDA">
+                <label class="form-label fw-bold">Patente</label>
+                <input id="filtroPatente" type="text" class="form-control" placeholder="Ej: ABCD-12">
             </div>
 
             <div class="col-md-4">
-                <label class="form-label fw-bold">RUT</label>
-                <input id="filtroRut" type="text" class="form-control" placeholder="Ej: 12.345.678-9">
+                <label class="form-label fw-bold">Marca</label>
+                <input id="filtroMarca" type="text" class="form-control" placeholder="Ej: Mercedes">
             </div>
 
             <div class="col-md-4 d-flex align-items-end">
@@ -37,18 +37,18 @@
         <table class="table table-hover align-middle">
             <thead>
                 <tr>
-                    <th>Cliente</th>
-                    <th>RUT</th>
-                    <th>Contacto</th>
-                    <th>Estado</th>
+                    <th>Patente</th>
+                    <th>Marca / Modelo</th>
+                    <th>Capacidad</th>
+                    <th>Tipo</th>
                     <th class="text-end"></th>
                 </tr>
             </thead>
 
-            <tbody id="tablaClientes">
+            <tbody id="tablaVehiculos">
                 <tr>
                     <td colspan="5" class="text-center text-muted py-4">
-                        Cargando clientes...
+                        Cargando vehículos...
                     </td>
                 </tr>
             </tbody>
@@ -63,41 +63,36 @@
 // Cargar tabla desde API
 // ===============================
 
-async function cargarClientes() {
-    const tbody = document.getElementById("tablaClientes");
+async function cargarVehiculos() {
+    const tbody = document.getElementById("tablaVehiculos");
     tbody.innerHTML = `
         <tr><td colspan="5" class="text-center text-muted py-4">Cargando...</td></tr>
     `;
 
     try {
-        const res = await fetch("http://127.0.0.1:8000/api/clientes/");
+        const res = await fetch("http://127.0.0.1:8000/api/vehiculos/");
         const data = await res.json();
 
         if (data.length === 0) {
             tbody.innerHTML = `
                 <tr><td colspan="5" class="text-center text-muted py-4">
-                    <div class="fs-5">No hay clientes registrados.</div>
-                    <div>Agrega un cliente para comenzar.</div>
+                    <div class="fs-5">No hay vehículos registrados.</div>
+                    <div>Agrega un vehículo para comenzar.</div>
                 </td></tr>
             `;
             return;
         }
 
         tbody.innerHTML = "";
-        data.forEach(c => {
+        data.forEach(v => {
             tbody.innerHTML += `
                 <tr>
-                    <td>👤 <strong>${c.nombre}</strong></td>
-                    <td>${c.rut}</td>
-                    <td>${c.email ? "✉️ " + c.email : "<span class='text-muted'>Sin correo</span>"}</td>
-                    <td>
-                        ${c.activo
-                            ? "<span class='badge bg-success'>Activo</span>"
-                            : "<span class='badge bg-danger'>Inactivo</span>"
-                        }
-                    </td>
+                    <td>🚛 <strong>${v.patente}</strong></td>
+                    <td>${v.marca} ${v.modelo}</td>
+                    <td>${v.capacidad_kg} kg</td>
+                    <td><span class="badge bg-info text-dark">${v.tipo_transporte}</span></td>
                     <td class="text-end">
-                        <a href="/site/clientes/editar/${c.id}/" class="btn btn-outline-dark btn-sm">
+                        <a href="/site/vehiculos/editar/${v.id}/" class="btn btn-outline-dark btn-sm">
                             Editar →
                         </a>
                     </td>
@@ -108,7 +103,7 @@ async function cargarClientes() {
     } catch (error) {
         tbody.innerHTML = `
             <tr><td colspan="5" class="text-center py-4 text-danger">
-                Error al cargar clientes
+                Error al cargar vehículos
             </td></tr>
         `;
         console.error(error);
@@ -125,18 +120,18 @@ document.getElementById("filtroForm").addEventListener("submit", e => {
 });
 
 async function aplicarFiltros() {
-    const nombre = document.getElementById("filtroNombre").value.toLowerCase();
-    const rut = document.getElementById("filtroRut").value.toLowerCase();
+    const patente = document.getElementById("filtroPatente").value.toLowerCase();
+    const marca = document.getElementById("filtroMarca").value.toLowerCase();
 
-    const res = await fetch("http://127.0.0.1:8000/api/clientes/");
+    const res = await fetch("http://127.0.0.1:8000/api/vehiculos/");
     const data = await res.json();
 
-    const filtrados = data.filter(c =>
-        c.nombre.toLowerCase().includes(nombre) &&
-        c.rut.toLowerCase().includes(rut)
+    const filtrados = data.filter(v =>
+        v.patente.toLowerCase().includes(patente) &&
+        v.marca.toLowerCase().includes(marca)
     );
 
-    const tbody = document.getElementById("tablaClientes");
+    const tbody = document.getElementById("tablaVehiculos");
     tbody.innerHTML = "";
 
     if (filtrados.length === 0) {
@@ -148,15 +143,15 @@ async function aplicarFiltros() {
         return;
     }
 
-    filtrados.forEach(c => {
+    filtrados.forEach(v => {
         tbody.innerHTML += `
             <tr>
-                <td>👤 <strong>${c.nombre}</strong></td>
-                <td>${c.rut}</td>
-                <td>${c.email ? "✉️ " + c.email : "<span class='text-muted'>Sin correo</span>"}</td>
-                <td>${c.activo ? "<span class='badge bg-success'>Activo</span>" : "<span class='badge bg-danger'>Inactivo</span>"}</td>
+                <td>🚛 <strong>${v.patente}</strong></td>
+                <td>${v.marca} ${v.modelo}</td>
+                <td>${v.capacidad_kg} kg</td>
+                <td><span class="badge bg-info text-dark">${v.tipo_transporte}</span></td>
                 <td class="text-end">
-                    <a href="/site/clientes/editar/${c.id}/" class="btn btn-outline-dark btn-sm">
+                    <a href="/site/vehiculos/editar/${v.id}/" class="btn btn-outline-dark btn-sm">
                         Editar →
                     </a>
                 </td>
@@ -166,7 +161,7 @@ async function aplicarFiltros() {
 }
 
 // Cargar al inicio
-cargarClientes();
+cargarVehiculos();
 </script>
 
 {% endblock %}

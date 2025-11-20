@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="mb-4 d-flex justify-content-between align-items-center">
+    <span>Pilotos</span>
+    <a href="{% url 'pilotos_crear' %}" class="btn btn-dark">➕ Nuevo Piloto</a>
+</h2>
+
+<!-- Filtros -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form id="filtroForm" class="row g-3">
+
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Nombre</label>
+                <input id="filtroNombre" type="text" class="form-control" placeholder="Ej: María">
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Certificación</label>
+                <input id="filtroCert" type="text" class="form-control" placeholder="Ej: PPL">
+            </div>
+
+            <div class="col-md-4 d-flex align-items-end">
+                <button class="btn btn-primary w-100" type="submit">🔍 Buscar</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<!-- Tabla -->
+<div class="card shadow-sm">
+    <div class="card-body">
+
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Certificación</th>
+                    <th>Estado</th>
+                    <th class="text-end"></th>
+                </tr>
+            </thead>
+
+            <tbody id="tablaPilotos">
+                <tr>
+                    <td colspan="4" class="text-center text-muted py-4">
+                        Cargando pilotos...
+                    </td>
+                </tr>
+            </tbody>
+
+        </table>
+
+    </div>
+</div>
+
+<script>
+async function cargarPilotos() {
+    const tbody = document.getElementById("tablaPilotos");
+    tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-4">Cargando...</td></tr>`;
+
+    try {
+        const res = await fetch("http://127.0.0.1:8000/api/pilotos/");
+        const data = await res.json();
+
+        if (data.length === 0) {
+            tbody.innerHTML = `
+                <tr><td colspan="4" class="text-center text-muted py-4">
+                    <div class="fs-5">No hay pilotos registrados.</div>
+                </td></tr>
+            `;
+            return;
+        }
+
+        tbody.innerHTML = "";
+        data.forEach(p => {
+            tbody.innerHTML += `
+                <tr>
+                    <td>👨‍✈️ <strong>${p.nombre} ${p.apellido}</strong></td>
+                    <td>${p.certificacion}</td>
+                    <td>
+                        ${p.vigente
+                            ? "<span class='badge bg-success'>Vigente</span>"
+                            : "<span class='badge bg-danger'>No Vigente</span>"
+                        }
+                    </td>
+                    <td class="text-end">
+                        <a href="/site/pilotos/editar/${p.id}/" class="btn btn-outline-dark btn-sm">
+                            Editar →
+                        </a>
+                    </td>
+                </tr>
+            `;
+        });
+
+    } catch (error) {
+        console.error(error);
+        tbody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-danger">Error al cargar</td></tr>`;
+    }
+}
+
+document.getElementById("filtroForm").addEventListener("submit", e => {
+    e.preventDefault();
+    aplicarFiltros();
+});
+
+async function aplicarFiltros() {
+    const nombre = document.getElementById("filtroNombre").value.toLowerCase();
+    const cert = document.getElementById("filtroCert").value.toLowerCase();
+
+    const res = await fetch("http://127.0.0.1:8000/api/pilotos/");
+    const data = await res.json();
+
+    const filtrados = data.filter(p =>
+        (p.nombre.toLowerCase().includes(nombre) || p.apellido.toLowerCase().includes(nombre)) &&
+        p.certificacion.toLowerCase().includes(cert)
+    );
+
+    const tbody = document.getElementById("tablaPilotos");
+    tbody.innerHTML = "";
+
+    if (filtrados.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-4">No se encontraron coincidencias.</td></tr>`;
+        return;
+    }
+
+    filtrados.forEach(p => {
+        tbody.innerHTML += `
+            <tr>
+                <td>👨‍✈️ <strong>${p.nombre} ${p.apellido}</strong></td>
+                <td>${p.certificacion}</td>
+                <td>
+                    ${p.vigente
+                        ? "<span class='badge bg-success'>Vigente</span>"
+                        : "<span class='badge bg-danger'>No Vigente</span>"
+                    }
+                </td>
+                <td class="text-end">
+                    <a href="/site/pilotos/editar/${p.id}/" class="btn btn-outline-dark btn-sm">Editar →</a>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+cargarPilotos();
+</script>
+
+{% endblock %}

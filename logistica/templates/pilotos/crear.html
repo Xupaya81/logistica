@@ -7,34 +7,35 @@
 <div class="card shadow-sm">
     <div class="card-body">
 
-        <form>
+        <form method="post">
+            {% csrf_token %}
 
             <div class="mb-3">
                 <label class="form-label fw-bold">Nombre</label>
-                <input type="text" class="form-control" placeholder="Ej: Carlos">
+                <input name="nombre" type="text" class="form-control" placeholder="Ej: Carlos" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label fw-bold">Apellido</label>
-                <input type="text" class="form-control" placeholder="Ej: Soto">
+                <input name="apellido" type="text" class="form-control" placeholder="Ej: Soto" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label fw-bold">Certificación</label>
-                <input type="text" class="form-control" placeholder="Ej: Licencia Comercial Aérea">
+                <input name="certificacion" type="text" class="form-control" placeholder="Ej: Licencia Comercial Aérea" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label fw-bold">Estado</label>
-                <select class="form-select">
-                    <option value="1">Disponible</option>
-                    <option value="0">No disponible</option>
+                <select name="vigente" class="form-select" required>
+                    <option value="1">Vigente</option>
+                    <option value="0">No Vigente</option>
                 </select>
             </div>
 
             <div class="d-flex justify-content-between mt-4">
-                <a href="/site/pilotos" class="btn btn-secondary">← Volver</a>
-                <button class="btn btn-dark">Registrar Piloto</button>
+                <a href="{% url 'pilotos_list' %}" class="btn btn-secondary">← Volver</a>
+                <button type="submit" class="btn btn-dark">Registrar Piloto</button>
             </div>
 
         </form>

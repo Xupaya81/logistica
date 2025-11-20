@@ -7,34 +7,27 @@
 <div class="card shadow-sm">
     <div class="card-body">
 
-        <form>
+        <form method="post">
+            {% csrf_token %}
 
             <div class="mb-3">
                 <label class="form-label fw-bold">Código aeronave</label>
-                <input type="text" class="form-control" placeholder="Ej: AER-320">
+                <input name="codigo" type="text" class="form-control" placeholder="Ej: AER-320" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label fw-bold">Modelo</label>
-                <input type="text" class="form-control" placeholder="Ej: Airbus A320">
+                <input name="modelo" type="text" class="form-control" placeholder="Ej: Airbus A320" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label fw-bold">Capacidad (kg)</label>
-                <input type="number" class="form-control" placeholder="Ej: 7000">
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label fw-bold">Estado</label>
-                <select class="form-select">
-                    <option value="1">Operativa</option>
-                    <option value="0">Fuera de servicio</option>
-                </select>
+                <input name="capacidad_kg" type="number" class="form-control" placeholder="Ej: 7000" required>
             </div>
 
             <div class="d-flex justify-content-between mt-4">
-                <a href="/site/aeronaves" class="btn btn-secondary">← Volver</a>
-                <button class="btn btn-dark">Registrar Aeronave</button>
+                <a href="{% url 'aeronaves_list' %}" class="btn btn-secondary">← Volver</a>
+                <button type="submit" class="btn btn-dark">Registrar Aeronave</button>
             </div>
 
         </form>

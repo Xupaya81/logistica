@@ -7,34 +7,35 @@
 <div class="card shadow-sm">
     <div class="card-body">
 
-        <form>
+        <form method="post">
+            {% csrf_token %}
 
             <div class="mb-3">
                 <label class="form-label fw-bold">Nombre</label>
-                <input type="text" class="form-control" placeholder="Ej: Juan">
+                <input name="nombre" type="text" class="form-control" placeholder="Ej: Juan" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label fw-bold">Apellido</label>
-                <input type="text" class="form-control" placeholder="Ej: Pérez">
+                <input name="apellido" type="text" class="form-control" placeholder="Ej: Pérez" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label fw-bold">Licencia</label>
-                <input type="text" class="form-control" placeholder="Ej: A2, A5, B">
+                <input name="licencia" type="text" class="form-control" placeholder="Ej: A2, A5, B" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label fw-bold">Estado</label>
-                <select class="form-select">
-                    <option value="1">Disponible</option>
-                    <option value="0">No disponible</option>
+                <select name="vigente" class="form-select" required>
+                    <option value="1">Vigente</option>
+                    <option value="0">No Vigente</option>
                 </select>
             </div>
 
             <div class="d-flex justify-content-between mt-4">
-                <a href="/site/conductores" class="btn btn-secondary">← Volver</a>
-                <button class="btn btn-dark">Registrar Conductor</button>
+                <a href="{% url 'conductores_list' %}" class="btn btn-secondary">← Volver</a>
+                <button type="submit" class="btn btn-dark">Registrar Conductor</button>
             </div>
 
         </form>

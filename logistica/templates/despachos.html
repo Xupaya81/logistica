@@ -14,36 +14,36 @@
 <!-- Filtros -->
 <div class="card shadow-sm mb-4">
     <div class="card-body">
-        <form class="row g-3">
+        <form id="filtroForm" class="row g-3">
 
             <div class="col-md-3">
-                <label class="form-label fw-bold">Vehículo / Aeronave</label>
-                <input type="text" class="form-control" placeholder="Ej: ABCD-12 o Airbus 320">
+                <label class="form-label fw-bold">Código</label>
+                <input id="filtroCodigo" type="text" class="form-control" placeholder="Ej: DSP-001">
             </div>
 
             <div class="col-md-3">
                 <label class="form-label fw-bold">Estado</label>
-                <select class="form-select">
+                <select id="filtroEstado" class="form-select">
                     <option value="">Todos</option>
-                    <option>Pendiente</option>
-                    <option>En tránsito</option>
-                    <option>Entregado</option>
-                    <option>Cancelado</option>
+                    <option value="PENDIENTE">Pendiente</option>
+                    <option value="EN_RUTA">En Ruta</option>
+                    <option value="ENTREGADO">Entregado</option>
+                    <option value="CANCELADO">Cancelado</option>
                 </select>
             </div>
 
             <div class="col-md-3">
                 <label class="form-label fw-bold">Desde</label>
-                <input type="date" class="form-control">
+                <input id="filtroDesde" type="date" class="form-control">
             </div>
 
             <div class="col-md-3">
                 <label class="form-label fw-bold">Hasta</label>
-                <input type="date" class="form-control">
+                <input id="filtroHasta" type="date" class="form-control">
             </div>
 
             <div class="col-md-12 d-flex justify-content-end">
-                <button class="btn btn-primary">
+                <button class="btn btn-primary" type="submit">
                     🔍 Filtrar
                 </button>
             </div>
@@ -59,81 +59,69 @@
         <table class="table table-hover align-middle">
             <thead>
                 <tr>
-                    <th>Despacho</th>
-                    <th>Ruta</th>
-                    <th>Transporte</th>
+                    <th>Código</th>
                     <th>Fecha</th>
+                    <th>Ruta</th>
+                    <th>Carga</th>
                     <th>Estado</th>
                     <th class="text-end"></th>
                 </tr>
             </thead>
-
-            <tbody>
-
-                {% for d in despachos %}
+            <tbody id="tablaDespachos">
                 <tr>
-
-                    <!-- Código -->
-                    <td>
-                        📦 <strong>{{ d.codigo }}</strong>
-                    </td>
-
-                    <!-- Ruta -->
-                    <td>
-                        {{ d.ruta.origen }} → {{ d.ruta.destino }}
-                    </td>
-
-                    <!-- Transporte -->
-                    <td>
-                        {% if d.vehiculo %}
-                            🚚 {{ d.vehiculo.patente }}
-                        {% elif d.aeronave %}
-                            ✈️ {{ d.aeronave.codigo }}
-                        {% else %}
-                            <span class="text-muted">Sin asignar</span>
-                        {% endif %}
-                    </td>
-
-                    <!-- Fecha -->
-                    <td>
-                        {{ d.fecha|date:"d-m-Y" }}
-                    </td>
-
-                    <!-- Estado -->
-                    <td>
-                        {% if d.estado == "PENDIENTE" %}
-                            <span class="badge bg-warning text-dark">Pendiente</span>
-                        {% elif d.estado == "EN_TRANSITO" %}
-                            <span class="badge bg-primary">En tránsito</span>
-                        {% elif d.estado == "ENTREGADO" %}
-                            <span class="badge bg-success">Entregado</span>
-                        {% elif d.estado == "CANCELADO" %}
-                            <span class="badge bg-danger">Cancelado</span>
-                        {% else %}
-                            <span class="badge bg-secondary">{{ d.estado }}</span>
-                        {% endif %}
-                    </td>
-
-                    <!-- Acciones -->
-                    <td class="text-end">
-                        <a href="{% url 'despachos_editar' d.id %}" class="btn btn-outline-dark btn-sm">Detalles →</a>
-                    </td>
-
-                </tr>
-
-                {% empty %}
-                <tr>
-                    <td colspan="6" class="text-center py-4 text-muted">
-                        <div class="fs-5"> No hay despachos registrados.</div>
-                        <div>Agrega un despacho para comenzar.</div>
+                    <td colspan="6" class="text-center text-muted py-4">
+                        Cargando despachos...
                     </td>
                 </tr>
-                {% endfor %}
-
             </tbody>
         </table>
 
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const tabla = document.getElementById("tablaDespachos");
+
+        function cargarDespachos() {
+            fetch("/api/despachos/")
+                .then(response => response.json())
+                .then(data => {
+                    tabla.innerHTML = "";
+                    if (data.length === 0) {
+                        tabla.innerHTML = `<tr><td colspan="6" class="text-center text-muted">No hay despachos registrados.</td></tr>`;
+                        return;
+                    }
+
+                    data.forEach(despacho => {
+                        const row = `
+                            <tr>
+                                <td>${despacho.codigo}</td>
+                                <td>${despacho.fecha}</td>
+                                <td>${despacho.ruta}</td>
+                                <td>${despacho.carga}</td>
+                                <td>${despacho.estado}</td>
+                                <td class="text-end">
+                                    <a href="/site/despachos/editar/${despacho.id}" class="btn btn-sm btn-outline-primary">✏️</a>
+                                </td>
+                            </tr>
+                        `;
+                        tabla.innerHTML += row;
+                    });
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    tabla.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Error al cargar datos.</td></tr>`;
+                });
+        }
+
+        cargarDespachos();
+
+        document.getElementById("filtroForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            cargarDespachos(); 
+        });
+    });
+</script>
 
 {% endblock %}

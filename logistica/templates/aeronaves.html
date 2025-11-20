@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="mb-4 d-flex justify-content-between align-items-center">
+    <span>Aeronaves</span>
+    <a href="{% url 'aeronaves_crear' %}" class="btn btn-dark">➕ Nueva Aeronave</a>
+</h2>
+
+<!-- Filtros -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form id="filtroForm" class="row g-3">
+
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Código</label>
+                <input id="filtroCodigo" type="text" class="form-control" placeholder="Ej: A-123">
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Modelo</label>
+                <input id="filtroModelo" type="text" class="form-control" placeholder="Ej: Boeing 747">
+            </div>
+
+            <div class="col-md-4 d-flex align-items-end">
+                <button class="btn btn-primary w-100" type="submit">🔍 Buscar</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<!-- Tabla -->
+<div class="card shadow-sm">
+    <div class="card-body">
+
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Modelo</th>
+                    <th>Capacidad</th>
+                    <th class="text-end"></th>
+                </tr>
+            </thead>
+
+            <tbody id="tablaAeronaves">
+                <tr>
+                    <td colspan="4" class="text-center text-muted py-4">
+                        Cargando aeronaves...
+                    </td>
+                </tr>
+            </tbody>
+
+        </table>
+
+    </div>
+</div>
+
+<script>
+async function cargarAeronaves() {
+    const tbody = document.getElementById("tablaAeronaves");
+    tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-4">Cargando...</td></tr>`;
+
+    try {
+        const res = await fetch("http://127.0.0.1:8000/api/aeronaves/");
+        const data = await res.json();
+
+        if (data.length === 0) {
+            tbody.innerHTML = `
+                <tr><td colspan="4" class="text-center text-muted py-4">
+                    <div class="fs-5">No hay aeronaves registradas.</div>
+                </td></tr>
+            `;
+            return;
+        }
+
+        tbody.innerHTML = "";
+        data.forEach(a => {
+            tbody.innerHTML += `
+                <tr>
+                    <td>✈️ <strong>${a.codigo}</strong></td>
+                    <td>${a.modelo}</td>
+                    <td>${a.capacidad_kg} kg</td>
+                    <td class="text-end">
+                        <a href="/site/aeronaves/editar/${a.id}/" class="btn btn-outline-dark btn-sm">
+                            Editar →
+                        </a>
+                    </td>
+                </tr>
+            `;
+        });
+
+    } catch (error) {
+        console.error(error);
+        tbody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-danger">Error al cargar</td></tr>`;
+    }
+}
+
+document.getElementById("filtroForm").addEventListener("submit", e => {
+    e.preventDefault();
+    aplicarFiltros();
+});
+
+async function aplicarFiltros() {
+    const codigo = document.getElementById("filtroCodigo").value.toLowerCase();
+    const modelo = document.getElementById("filtroModelo").value.toLowerCase();
+
+    const res = await fetch("http://127.0.0.1:8000/api/aeronaves/");
+    const data = await res.json();
+
+    const filtrados = data.filter(a =>
+        a.codigo.toLowerCase().includes(codigo) &&
+        a.modelo.toLowerCase().includes(modelo)
+    );
+
+    const tbody = document.getElementById("tablaAeronaves");
+    tbody.innerHTML = "";
+
+    if (filtrados.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-4">No se encontraron coincidencias.</td></tr>`;
+        return;
+    }
+
+    filtrados.forEach(a => {
+        tbody.innerHTML += `
+            <tr>
+                <td>✈️ <strong>${a.codigo}</strong></td>
+                <td>${a.modelo}</td>
+                <td>${a.capacidad_kg} kg</td>
+                <td class="text-end">
+                    <a href="/site/aeronaves/editar/${a.id}/" class="btn btn-outline-dark btn-sm">Editar →</a>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+cargarAeronaves();
+</script>
+
+{% endblock %}

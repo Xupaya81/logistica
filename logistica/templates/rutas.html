@@ -13,30 +13,29 @@
 <!-- Filtros -->
 <div class="card shadow-sm mb-4">
     <div class="card-body">
-        <form class="row g-3">
+        <form id="filtroForm" class="row g-3">
 
             <div class="col-md-3">
                 <label class="form-label fw-bold">Origen</label>
-                <input type="text" class="form-control" placeholder="Ej: Santiago">
+                <input id="filtroOrigen" type="text" class="form-control" placeholder="Ej: Santiago">
             </div>
 
             <div class="col-md-3">
                 <label class="form-label fw-bold">Destino</label>
-                <input type="text" class="form-control" placeholder="Ej: Iquique">
+                <input id="filtroDestino" type="text" class="form-control" placeholder="Ej: Iquique">
             </div>
 
             <div class="col-md-3">
                 <label class="form-label fw-bold">Tipo de Transporte</label>
-                <select class="form-select">
+                <select id="filtroTipo" class="form-select">
                     <option value="">Todos</option>
-                    <option>Terrestre</option>
-                    <option>Aéreo</option>
-                    <option>Marítimo</option>
+                    <option value="TERRESTRE">Terrestre</option>
+                    <option value="AEREO">Aéreo</option>
                 </select>
             </div>
 
             <div class="col-md-3 d-flex align-items-end">
-                <button class="btn btn-primary w-100">🔍 Buscar</button>
+                <button class="btn btn-primary w-100" type="submit">🔍 Buscar</button>
             </div>
 
         </form>
@@ -52,73 +51,65 @@
                 <tr>
                     <th>Origen</th>
                     <th>Destino</th>
-                    <th>Transporte</th>
-                    <th>Cliente</th>
-                    <th>Estado</th>
+                    <th>Tipo</th>
+                    <th>Distancia (km)</th>
                     <th class="text-end"></th>
                 </tr>
             </thead>
-
-            <tbody>
-                {% for r in rutas %}
+            <tbody id="tablaRutas">
                 <tr>
-
-                    <!-- Origen -->
-                    <td>
-                        📍 <strong>{{ r.origen }}</strong>
-                    </td>
-
-                    <!-- Destino -->
-                    <td>
-                        🏁 {{ r.destino }}
-                    </td>
-
-                    <!-- Transporte -->
-                    <td>
-                        {% if r.tipo_transporte == "TERRESTRE" %}
-                            <span class="badge bg-success">🚚 Terrestre</span>
-                        {% elif r.tipo_transporte == "AEREO" %}
-                            <span class="badge bg-primary">✈️ Aéreo</span>
-                        {% elif r.tipo_transporte == "MARITIMO" %}
-                            <span class="badge bg-info text-dark">🚢 Marítimo</span>
-                        {% else %}
-                            <span class="badge bg-secondary">{{ r.tipo_transporte }}</span>
-                        {% endif %}
-                    </td>
-
-                    <!-- Cliente -->
-                    <td>{{ r.cliente.nombre }}</td>
-
-                    <!-- Estado -->
-                    <td>
-                        {% if r.activa %}
-                            <span class="badge bg-success">Activa</span>
-                        {% else %}
-                            <span class="badge bg-danger">Suspendida</span>
-                        {% endif %}
-                    </td>
-
-                    <!-- Botón -->
-                    <td class="text-end">
-                        <a href="/site/despachos?ruta={{ r.id }}" class="btn btn-outline-dark btn-sm">
-                            Ver despachos →
-                        </a>
-                    </td>
-
-                </tr>
-
-                {% empty %}
-                <tr>
-                    <td colspan="6" class="text-center py-4 text-muted">
-                        <div class="fs-5"> No hay rutas registradas.</div>
-                        <div>Agrega una ruta para comenzar.</div>
+                    <td colspan="5" class="text-center text-muted py-4">
+                        Cargando rutas...
                     </td>
                 </tr>
-                {% endfor %}
             </tbody>
         </table>
 
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const tabla = document.getElementById("tablaRutas");
+
+        function cargarRutas() {
+            fetch("/api/rutas/")
+                .then(response => response.json())
+                .then(data => {
+                    tabla.innerHTML = "";
+                    if (data.length === 0) {
+                        tabla.innerHTML = `<tr><td colspan="5" class="text-center text-muted">No hay rutas registradas.</td></tr>`;
+                        return;
+                    }
+
+                    data.forEach(ruta => {
+                        const row = `
+                            <tr>
+                                <td>${ruta.origen}</td>
+                                <td>${ruta.destino}</td>
+                                <td>${ruta.tipo_transporte}</td>
+                                <td>${ruta.distancia_km}</td>
+                                <td class="text-end">
+                                    <a href="/site/rutas/editar/${ruta.id}" class="btn btn-sm btn-outline-primary">✏️</a>
+                                </td>
+                            </tr>
+                        `;
+                        tabla.innerHTML += row;
+                    });
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    tabla.innerHTML = `<tr><td colspan="5" class="text-center text-danger">Error al cargar datos.</td></tr>`;
+                });
+        }
+
+        cargarRutas();
+
+        document.getElementById("filtroForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            cargarRutas(); 
+        });
+    });
+</script>
 
 {% endblock %}

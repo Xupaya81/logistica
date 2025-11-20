@@ -7,46 +7,38 @@
 <div class="card shadow-sm">
     <div class="card-body">
 
-        <form>
+        <form method="post">
+            {% csrf_token %}
 
             <div class="mb-3">
                 <label class="form-label fw-bold">Origen</label>
-                <input type="text" class="form-control" value="Santiago">
+                <input name="origen" type="text" class="form-control" value="{{ ruta.origen }}" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label fw-bold">Destino</label>
-                <input type="text" class="form-control" value="Iquique">
+                <input name="destino" type="text" class="form-control" value="{{ ruta.destino }}" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label fw-bold">Tipo de Transporte</label>
-                <select class="form-select">
-                    <option selected>Terrestre</option>
-                    <option>Aéreo</option>
-                    <option>Marítimo</option>
+                <select name="tipo_transporte" class="form-select" required>
+                    <option value="TERRESTRE" {% if ruta.tipo_transporte == 'TERRESTRE' %}selected{% endif %}>Terrestre</option>
+                    <option value="AEREO" {% if ruta.tipo_transporte == 'AEREO' %}selected{% endif %}>Aéreo</option>
                 </select>
             </div>
 
             <div class="mb-3">
-                <label class="form-label fw-bold">Cliente</label>
-                <select class="form-select">
-                    <option selected>Cliente A</option>
-                    <option>Cliente B</option>
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label fw-bold">Estado</label>
-                <select class="form-select">
-                    <option value="1" selected>Activa</option>
-                    <option value="0">Suspendida</option>
-                </select>
+                <label class="form-label fw-bold">Distancia (km)</label>
+                <input name="distancia_km" type="number" class="form-control" value="{{ ruta.distancia_km }}" required>
             </div>
 
             <div class="d-flex justify-content-between mt-4">
-                <a href="/site/rutas" class="btn btn-secondary">← Volver</a>
-                <button class="btn btn-dark">Guardar Cambios</button>
+                <a href="{% url 'rutas_list' %}" class="btn btn-secondary">← Volver</a>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'rutas_eliminar' ruta.id %}" class="btn btn-danger">Eliminar</a>
+                    <button type="submit" class="btn btn-dark">Guardar Cambios</button>
+                </div>
             </div>
 
         </form>

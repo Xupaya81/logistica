@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<h2 class="mb-4">➕ Registrar Nuevo Cliente</h2>
+<h2 class="mb-4 fw-bold text-primary">➕ Registrar Nuevo Cliente</h2>
 
 <div class="card shadow-sm">
     <div class="card-body">
@@ -10,18 +10,18 @@
         <form method="post">
             {% csrf_token %}
 
-            <!-- Nombre o Razón Social -->
+            <!-- Nombre -->
             <div class="mb-3">
                 <label class="form-label fw-bold">Nombre o Razón Social</label>
                 <input name="nombre" type="text" class="form-control"
-                       placeholder="Ej: Transportes Ruiz Ltda">
+                       placeholder="Ej: Transportes Ruiz Ltda" required>
             </div>
 
             <!-- RUT -->
             <div class="mb-3">
                 <label class="form-label fw-bold">RUT</label>
                 <input name="rut" type="text" class="form-control"
-                       placeholder="12.345.678-9">
+                       placeholder="12.345.678-9" required>
             </div>
 
             <!-- Correo -->
@@ -34,7 +34,7 @@
             <!-- Estado -->
             <div class="mb-3">
                 <label class="form-label fw-bold">Estado</label>
-                <select name="estado" class="form-select">
+                <select name="estado" class="form-select" required>
                     <option value="">Seleccione...</option>
                     <option value="1">Activo</option>
                     <option value="0">Inactivo</option>
@@ -43,7 +43,7 @@
 
             <div class="d-flex justify-content-between mt-4">
                 <a href="{% url 'clientes_list' %}" class="btn btn-secondary">← Volver</a>
-                <button class="btn btn-dark">Guardar Cliente</button>
+                <button type="submit" class="btn btn-dark">Guardar Cliente</button>
             </div>
 
         </form>

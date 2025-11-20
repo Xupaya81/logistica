@@ -12,53 +12,87 @@
 
             <div class="mb-3">
                 <label class="form-label fw-bold">Código del despacho</label>
-                <input name="codigo" type="text" class="form-control" placeholder="Ej: DSP-00123">
+                <input name="codigo" type="text" class="form-control" placeholder="Ej: DSP-00123" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Fecha de despacho</label>
+                <input name="fecha" type="date" class="form-control" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label fw-bold">Ruta</label>
-                <select name="ruta" class="form-select">
+                <select name="ruta" class="form-select" required>
                     <option value="">Seleccione una ruta</option>
+                    {% for ruta in rutas %}
+                        <option value="{{ ruta.id }}">{{ ruta.origen }} -> {{ ruta.destino }}</option>
+                    {% endfor %}
                 </select>
             </div>
 
             <div class="mb-3">
-                <label class="form-label fw-bold">Tipo de Transporte</label>
-                <select name="tipo_transporte" class="form-select">
-                    <option value="">Seleccionar</option>
-                    <option value="vehiculo">Vehículo</option>
-                    <option value="aeronave">Aeronave</option>
+                <label class="form-label fw-bold">Carga</label>
+                <select name="carga" class="form-select" required>
+                    <option value="">Seleccione una carga</option>
+                    {% for carga in cargas %}
+                        <option value="{{ carga.id }}">{{ carga.descripcion }} ({{ carga.peso_kg }}kg)</option>
+                    {% endfor %}
                 </select>
             </div>
 
             <div class="mb-3">
                 <label class="form-label fw-bold">Vehículo (si aplica)</label>
-                <input name="vehiculo" type="text" class="form-control" placeholder="Patente">
+                <select name="vehiculo" class="form-select">
+                    <option value="">Seleccione un vehículo</option>
+                    {% for vehiculo in vehiculos %}
+                        <option value="{{ vehiculo.id }}">{{ vehiculo.patente }} - {{ vehiculo.marca }}</option>
+                    {% endfor %}
+                </select>
             </div>
 
             <div class="mb-3">
                 <label class="form-label fw-bold">Aeronave (si aplica)</label>
-                <input name="aeronave" type="text" class="form-control" placeholder="Código aeronave">
+                <select name="aeronave" class="form-select">
+                    <option value="">Seleccione una aeronave</option>
+                    {% for aeronave in aeronaves %}
+                        <option value="{{ aeronave.id }}">{{ aeronave.codigo }} - {{ aeronave.modelo }}</option>
+                    {% endfor %}
+                </select>
             </div>
 
             <div class="mb-3">
-                <label class="form-label fw-bold">Fecha de despacho</label>
-                <input name="fecha" type="date" class="form-control">
+                <label class="form-label fw-bold">Conductor (si aplica)</label>
+                <select name="conductor" class="form-select">
+                    <option value="">Seleccione un conductor</option>
+                    {% for conductor in conductores %}
+                        <option value="{{ conductor.id }}">{{ conductor.nombre }} {{ conductor.apellido }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Piloto (si aplica)</label>
+                <select name="piloto" class="form-select">
+                    <option value="">Seleccione un piloto</option>
+                    {% for piloto in pilotos %}
+                        <option value="{{ piloto.id }}">{{ piloto.nombre }} {{ piloto.apellido }}</option>
+                    {% endfor %}
+                </select>
             </div>
 
             <div class="mb-3">
                 <label class="form-label fw-bold">Estado</label>
-                <select name="estado" class="form-select">
-                    <option value="PENDIENTE">PENDIENTE</option>
-                    <option value="EN_TRANSITO">EN_TRANSITO</option>
-                    <option value="ENTREGADO">ENTREGADO</option>
-                    <option value="CANCELADO">CANCELADO</option>
+                <select name="estado" class="form-select" required>
+                    <option value="PENDIENTE">Pendiente</option>
+                    <option value="EN_RUTA">En Ruta</option>
+                    <option value="ENTREGADO">Entregado</option>
+                    <option value="CANCELADO">Cancelado</option>
                 </select>
             </div>
 
             <div class="d-flex justify-content-between mt-4">
-                <a href="/site/despachos" class="btn btn-secondary">← Volver</a>
-                <button class="btn btn-dark">Crear Despacho</button>
+                <a href="{% url 'despachos_list' %}" class="btn btn-secondary">← Volver</a>
+                <button type="submit" class="btn btn-dark">Registrar Despacho</button>
             </div>
 
         </form>
