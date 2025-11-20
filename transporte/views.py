@@ -9,6 +9,7 @@ Incluye:
 import requests
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 from rest_framework import viewsets
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -53,13 +54,11 @@ class AeronaveViewSet(viewsets.ModelViewSet):
 class ConductorViewSet(viewsets.ModelViewSet):
     queryset = Conductor.objects.all()
     serializer_class = ConductorSerializer
-    permission_classes = [IsAuthenticated]
 
 
 class PilotoViewSet(viewsets.ModelViewSet):
     queryset = Piloto.objects.all()
     serializer_class = PilotoSerializer
-    permission_classes = [IsAuthenticated]
 
 
 class ClienteViewSet(viewsets.ModelViewSet):
@@ -83,45 +82,91 @@ class RutaViewSet(viewsets.ModelViewSet):
 class DespachoViewSet(viewsets.ModelViewSet):
     queryset = Despacho.objects.all()
     serializer_class = DespachoSerializer
-    permission_classes = [IsAuthenticated]
 
 
 # ==========================================
 # VISTAS HTML PRINCIPALES
 # ==========================================
 
+@login_required
 def home(request):
-    return render(request, "home.html")
+    try:
+        # Consumir API para obtener conteos
+        despachos = requests.get(API_BASE + "despachos/").json()
+        rutas = requests.get(API_BASE + "rutas/").json()
+        clientes = requests.get(API_BASE + "clientes/").json()
+        vehiculos = requests.get(API_BASE + "vehiculos/").json()
+        aeronaves = requests.get(API_BASE + "aeronaves/").json()
+
+        # Datos para gráficos
+        transport_types = [len(vehiculos), len(aeronaves)]
+        
+        # Agrupar despachos por estado (ejemplo simple)
+        estados = {}
+        for d in despachos:
+            estado = d.get('estado', 'Desconocido')
+            estados[estado] = estados.get(estado, 0) + 1
+        
+        despachos_labels = list(estados.keys())
+        despachos_data = list(estados.values())
+
+        context = {
+            "despachos_count": len(despachos),
+            "rutas_count": len(rutas),
+            "clientes_count": sum(1 for c in clientes if c.get('activo')),
+            "transport_types": transport_types,
+            "despachos_labels": despachos_labels,
+            "despachos_data": despachos_data,
+        }
+    except Exception:
+        context = {
+            "despachos_count": "-",
+            "rutas_count": "-",
+            "clientes_count": "-",
+            "transport_types": [0, 0],
+            "despachos_labels": [],
+            "despachos_data": [],
+        }
+    
+    return render(request, "home.html", context)
 
 
+@login_required
 def despachos_html(request):
     return render(request, "despachos.html")
 
 
+@login_required
 def rutas_html(request):
     return render(request, "rutas.html")
 
 
+@login_required
 def clientes_html(request):
     return render(request, "clientes.html")
 
 
+@login_required
 def vehiculos_list(request):
     return render(request, "vehiculos.html")
 
 
+@login_required
 def aeronaves_list(request):
     return render(request, "aeronaves.html")
 
 
+@login_required
 def conductores_list(request):
     return render(request, "conductores.html")
 
 
+@login_required
 def pilotos_list(request):
     return render(request, "pilotos.html")
 
 
+@login_required
 def cargas_list(request):
     return render(request, "cargas.html")
 
@@ -130,12 +175,13 @@ def cargas_list(request):
 # CRUD CLIENTES (HTML + API)
 # ==========================================
 
+@login_required
 def clientes_crear(request):
     if request.method == "POST":
         data = {
             "nombre": request.POST.get("nombre"),
             "rut": request.POST.get("rut"),
-            "email": request.POST.get("correo"),
+            "correo": request.POST.get("correo"),
             "activo": request.POST.get("estado") == "1",
         }
 
@@ -150,6 +196,7 @@ def clientes_crear(request):
     return render(request, "clientes/crear.html")
 
 
+@login_required
 def clientes_editar(request, pk):
 
     # Obtener cliente desde la API
@@ -159,8 +206,8 @@ def clientes_editar(request, pk):
         data = {
             "nombre": request.POST.get("nombre"),
             "rut": request.POST.get("rut"),
-            "email": request.POST.get("correo"),
-            "activo": request.POST.get("estado") == "1",
+            "correo": request.POST.get("correo"),
+            "activo": True if request.POST.get("estado") == "1" else False,
         }
 
         resp = requests.put(API_BASE + f"clientes/{pk}/", json=data)
@@ -174,6 +221,7 @@ def clientes_editar(request, pk):
     return render(request, "clientes/editar.html", {"cliente": cliente})
 
 
+@login_required
 def clientes_eliminar(request, pk):
 
     if request.method == "POST":
@@ -199,6 +247,7 @@ def clientes_eliminar(request, pk):
 # CRUD VEHICULOS
 # ==========================================
 
+@login_required
 def vehiculos_crear(request):
     if request.method == "POST":
         data = {
@@ -217,6 +266,7 @@ def vehiculos_crear(request):
     return render(request, "vehiculos/crear.html")
 
 
+@login_required
 def vehiculos_editar(request, pk):
     if request.method == "POST":
         data = {
@@ -236,6 +286,7 @@ def vehiculos_editar(request, pk):
     return render(request, "vehiculos/editar.html", {"vehiculo": vehiculo})
 
 
+@login_required
 def vehiculos_eliminar(request, pk):
     if request.method == "POST":
         resp = requests.delete(API_BASE + f"vehiculos/{pk}/")
@@ -252,6 +303,7 @@ def vehiculos_eliminar(request, pk):
 # CRUD AERONAVES
 # ==========================================
 
+@login_required
 def aeronaves_crear(request):
     if request.method == "POST":
         data = {
@@ -266,6 +318,7 @@ def aeronaves_crear(request):
         messages.error(request, "Error al crear aeronave.")
     return render(request, "aeronaves/crear.html")
 
+@login_required
 def aeronaves_editar(request, pk):
     if request.method == "POST":
         data = {
@@ -282,6 +335,7 @@ def aeronaves_editar(request, pk):
     aeronave = requests.get(API_BASE + f"aeronaves/{pk}/").json()
     return render(request, "aeronaves/editar.html", {"aeronave": aeronave})
 
+@login_required
 def aeronaves_eliminar(request, pk):
     if request.method == "POST":
         resp = requests.delete(API_BASE + f"aeronaves/{pk}/")
@@ -298,6 +352,7 @@ def aeronaves_eliminar(request, pk):
 # CRUD CONDUCTORES
 # ==========================================
 
+@login_required
 def conductores_crear(request):
     if request.method == "POST":
         data = {
@@ -313,6 +368,7 @@ def conductores_crear(request):
         messages.error(request, "Error al crear conductor.")
     return render(request, "conductores/crear.html")
 
+@login_required
 def conductores_editar(request, pk):
     if request.method == "POST":
         data = {
@@ -330,6 +386,7 @@ def conductores_editar(request, pk):
     conductor = requests.get(API_BASE + f"conductores/{pk}/").json()
     return render(request, "conductores/editar.html", {"conductor": conductor})
 
+@login_required
 def conductores_eliminar(request, pk):
     if request.method == "POST":
         resp = requests.delete(API_BASE + f"conductores/{pk}/")
@@ -346,6 +403,7 @@ def conductores_eliminar(request, pk):
 # CRUD PILOTOS
 # ==========================================
 
+@login_required
 def pilotos_crear(request):
     if request.method == "POST":
         data = {
@@ -361,6 +419,7 @@ def pilotos_crear(request):
         messages.error(request, "Error al crear piloto.")
     return render(request, "pilotos/crear.html")
 
+@login_required
 def pilotos_editar(request, pk):
     if request.method == "POST":
         data = {
@@ -378,6 +437,7 @@ def pilotos_editar(request, pk):
     piloto = requests.get(API_BASE + f"pilotos/{pk}/").json()
     return render(request, "pilotos/editar.html", {"piloto": piloto})
 
+@login_required
 def pilotos_eliminar(request, pk):
     if request.method == "POST":
         resp = requests.delete(API_BASE + f"pilotos/{pk}/")
@@ -394,6 +454,7 @@ def pilotos_eliminar(request, pk):
 # CRUD CARGAS
 # ==========================================
 
+@login_required
 def cargas_crear(request):
     if request.method == "POST":
         data = {
@@ -412,6 +473,7 @@ def cargas_crear(request):
     clientes = requests.get(API_BASE + "clientes/").json()
     return render(request, "cargas/crear.html", {"clientes": clientes})
 
+@login_required
 def cargas_editar(request, pk):
     if request.method == "POST":
         data = {
@@ -431,6 +493,7 @@ def cargas_editar(request, pk):
     clientes = requests.get(API_BASE + "clientes/").json()
     return render(request, "cargas/editar.html", {"carga": carga, "clientes": clientes})
 
+@login_required
 def cargas_eliminar(request, pk):
     if request.method == "POST":
         resp = requests.delete(API_BASE + f"cargas/{pk}/")
@@ -447,6 +510,7 @@ def cargas_eliminar(request, pk):
 # CRUD RUTAS
 # ==========================================
 
+@login_required
 def rutas_crear(request):
     if request.method == "POST":
         data = {
@@ -462,6 +526,7 @@ def rutas_crear(request):
         messages.error(request, "Error al crear ruta.")
     return render(request, "rutas/crear.html")
 
+@login_required
 def rutas_editar(request, pk):
     if request.method == "POST":
         data = {
@@ -479,6 +544,7 @@ def rutas_editar(request, pk):
     ruta = requests.get(API_BASE + f"rutas/{pk}/").json()
     return render(request, "rutas/editar.html", {"ruta": ruta})
 
+@login_required
 def rutas_eliminar(request, pk):
     if request.method == "POST":
         resp = requests.delete(API_BASE + f"rutas/{pk}/")
@@ -495,6 +561,7 @@ def rutas_eliminar(request, pk):
 # CRUD DESPACHOS
 # ==========================================
 
+@login_required
 def despachos_crear(request):
     if request.method == "POST":
         data = {
@@ -524,6 +591,7 @@ def despachos_crear(request):
     }
     return render(request, "despachos/crear.html", context)
 
+@login_required
 def despachos_editar(request, pk):
     if request.method == "POST":
         data = {
@@ -556,6 +624,7 @@ def despachos_editar(request, pk):
     return render(request, "despachos/editar.html", context)
 
 
+@login_required
 def despachos_eliminar(request, pk):
     # Eliminar despacho
     if request.method == "POST":

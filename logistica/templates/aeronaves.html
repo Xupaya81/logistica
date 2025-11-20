@@ -63,7 +63,7 @@ async function cargarAeronaves() {
     tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-4">Cargando...</td></tr>`;
 
     try {
-        const res = await fetch("http://127.0.0.1:8000/api/aeronaves/");
+        const res = await fetch("http://127.0.0.1:8000/aeronaves/");
         const data = await res.json();
 
         if (data.length === 0) {
@@ -106,7 +106,7 @@ async function aplicarFiltros() {
     const codigo = document.getElementById("filtroCodigo").value.toLowerCase();
     const modelo = document.getElementById("filtroModelo").value.toLowerCase();
 
-    const res = await fetch("http://127.0.0.1:8000/api/aeronaves/");
+    const res = await fetch("http://127.0.0.1:8000/aeronaves/");
     const data = await res.json();
 
     const filtrados = data.filter(a =>

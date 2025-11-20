@@ -84,7 +84,7 @@
         const tabla = document.getElementById("tablaDespachos");
 
         function cargarDespachos() {
-            fetch("/api/despachos/")
+            fetch("/despachos/")
                 .then(response => response.json())
                 .then(data => {
                     tabla.innerHTML = "";

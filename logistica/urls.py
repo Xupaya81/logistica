@@ -35,6 +35,7 @@ urlpatterns = [
     # ADMIN
     # ===========================
     path('admin/', admin.site.urls),
+    path('accounts/', include('django.contrib.auth.urls')),
 
     # ===========================
     # JWT

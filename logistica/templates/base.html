@@ -81,6 +81,7 @@
                 </a>
             </li>
 
+            {% if user.is_authenticated %}
             <!-- Dropdown Gestión (mega menú compacto) -->
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
@@ -99,19 +100,33 @@
                     <li class="dropdown-header fw-bold text-secondary">Transporte</li>
                     <li><a class="dropdown-item" href="/site/vehiculos/"><i class="bi bi-truck-front me-2"></i>Vehículos</a></li>
                     <li><a class="dropdown-item" href="/site/aeronaves/"><i class="bi bi-airplane me-2"></i>Aeronaves</a></li>
-                    <li><a class="dropdown-item" href="/site/cargas/"><i class="bi bi-box me-2"></i>Cargas</a></li>
-
-                    <li><hr class="dropdown-divider"></li>
-
-                    <li class="dropdown-header fw-bold text-secondary">Personal</li>
                     <li><a class="dropdown-item" href="/site/conductores/"><i class="bi bi-person-badge me-2"></i>Conductores</a></li>
-                    <li><a class="dropdown-item" href="/site/pilotos/"><i class="bi bi-person-gear me-2"></i>Pilotos</a></li>
+                    <li><a class="dropdown-item" href="/site/pilotos/"><i class="bi bi-person-vcard me-2"></i>Pilotos</a></li>
+                    <li><a class="dropdown-item" href="/site/cargas/"><i class="bi bi-box me-2"></i>Cargas</a></li>
                 </ul>
             </li>
 
-            <!-- Swagger -->
-            <li class="nav-item">
-                <a class="nav-link" href="/swagger/">
+            <!-- Logout -->
+            <li class="nav-item ms-2">
+                <form action="{% url 'logout' %}" method="post" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-light btn-sm mt-1">
+                        <i class="bi bi-box-arrow-right me-1"></i>Salir
+                    </button>
+                </form>
+            </li>
+            {% else %}
+            <!-- Login -->
+            <li class="nav-item ms-2">
+                <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm mt-1">
+                    <i class="bi bi-box-arrow-in-right me-1"></i>Ingresar
+                </a>
+            </li>
+            {% endif %}
+
+            <!-- API Docs -->
+            <li class="nav-item ms-3 border-start ps-3">
+                <a href="/swagger/" class="nav-link" target="_blank">
                     <i class="bi bi-code-slash me-1"></i>API Docs
                 </a>
             </li>

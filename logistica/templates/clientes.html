@@ -39,7 +39,7 @@
                 <tr>
                     <th>Cliente</th>
                     <th>RUT</th>
-                    <th>Contacto</th>
+                    <th>Correo</th>
                     <th>Estado</th>
                     <th class="text-end"></th>
                 </tr>
@@ -70,7 +70,7 @@ async function cargarClientes() {
     `;
 
     try {
-        const res = await fetch("http://127.0.0.1:8000/api/clientes/");
+        const res = await fetch("http://127.0.0.1:8000/clientes/");
         const data = await res.json();
 
         if (data.length === 0) {
@@ -89,7 +89,7 @@ async function cargarClientes() {
                 <tr>
                     <td>👤 <strong>${c.nombre}</strong></td>
                     <td>${c.rut}</td>
-                    <td>${c.email ? "✉️ " + c.email : "<span class='text-muted'>Sin correo</span>"}</td>
+                    <td>${c.correo ? "✉️ " + c.correo : "<span class='text-muted'>Sin correo</span>"}</td>
                     <td>
                         ${c.activo
                             ? "<span class='badge bg-success'>Activo</span>"
@@ -128,7 +128,7 @@ async function aplicarFiltros() {
     const nombre = document.getElementById("filtroNombre").value.toLowerCase();
     const rut = document.getElementById("filtroRut").value.toLowerCase();
 
-    const res = await fetch("http://127.0.0.1:8000/api/clientes/");
+    const res = await fetch("http://127.0.0.1:8000/clientes/");
     const data = await res.json();
 
     const filtrados = data.filter(c =>

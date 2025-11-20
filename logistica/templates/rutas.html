@@ -73,7 +73,7 @@
         const tabla = document.getElementById("tablaRutas");
 
         function cargarRutas() {
-            fetch("/api/rutas/")
+            fetch("/rutas/")
                 .then(response => response.json())
                 .then(data => {
                     tabla.innerHTML = "";

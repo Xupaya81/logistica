@@ -63,7 +63,7 @@ async function cargarConductores() {
     tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-4">Cargando...</td></tr>`;
 
     try {
-        const res = await fetch("http://127.0.0.1:8000/api/conductores/");
+        const res = await fetch("/conductores/");
         const data = await res.json();
 
         if (data.length === 0) {
@@ -111,7 +111,7 @@ async function aplicarFiltros() {
     const nombre = document.getElementById("filtroNombre").value.toLowerCase();
     const licencia = document.getElementById("filtroLicencia").value.toLowerCase();
 
-    const res = await fetch("http://127.0.0.1:8000/api/conductores/");
+    const res = await fetch("/conductores/");
     const data = await res.json();
 
     const filtrados = data.filter(c =>
